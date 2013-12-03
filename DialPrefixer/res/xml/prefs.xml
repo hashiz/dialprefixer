@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <PreferenceCategory
+        android:title="@string/pref_category_dial_prefix"
+        >
+
+        <TextboxPreference
+	        android:id="@+id/prefs_prefix_textbox"
+	        android:key="prefix"
+	        android:title="@string/prefs_prefix"
+	        android:defaultValue="0063"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        />
+	
+	    <TextboxPreference
+	        android:id="@+id/prefs_callerid_deny_textbox"
+	        android:key="callerid_deny"
+	        android:title="@string/prefs_callerid_deny"
+	        android:defaultValue="184"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        />
+
+	    <TextboxPreference
+	        android:id="@+id/prefs_callerid_permit_textbox"
+	        android:key="callerid_permit"
+	        android:title="@string/prefs_callerid_permit"
+	        android:defaultValue="186"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        />
+	</PreferenceCategory>
+
+    <PreferenceCategory
+        android:title="@string/pref_category_calllog"
+        >
+
+    	<CheckBoxPreference
+		    android:id="@+id/prefs_calllog_deleteprefix_checkbox"
+		    android:key="calllog_deleteprefix"
+		    android:title="@string/prefs_calllog_deleteprefix"
+		    android:defaultValue="true"
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    />
+
+	</PreferenceCategory>
+
+    <PreferenceCategory
+        android:title="@string/pref_category_ui"
+        >
+
+    	<CheckBoxPreference
+			android:id="@+id/prefs_ui_confirmnumber_checkbox"
+			android:key="confirmnumber"
+			android:title="@string/prefs_ui_confirmnumber"
+			android:defaultValue="true"
+			android:layout_width="wrap_content"
+	       	android:layout_height="wrap_content"
+	        />
+
+    	<CheckBoxPreference
+			android:id="@+id/prefs_ui_displaynumber_checkbox"
+			android:key="displaynumber"
+			android:title="@string/prefs_ui_displaynumber"
+			android:defaultValue="true"
+	       	android:layout_width="wrap_content"
+	       	android:layout_height="wrap_content"
+	        />
+
+	</PreferenceCategory>
+
+</PreferenceScreen>
