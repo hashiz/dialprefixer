@@ -2,8 +2,7 @@ package jp.meridiani.apps.dialprefixer;
 
 import java.util.List;
 
-import jp.meridiani.apps.volumeprofile.main.DragDropListItem.DragDropListener;
-import jp.meridiani.apps.volumeprofile.profile.VolumeProfile;
+import jp.meridiani.apps.dialprefixer.DragDropListItem.DragDropListener;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.View;
@@ -14,7 +13,7 @@ public class DragDropListView extends ListView implements DragDropListener {
 	private OnSortedListener mOnSortedListener = null;
 
 	public interface OnSortedListener {
-		public void onSorted(List<VolumeProfile> list);
+		public void onSorted(List<RuleEntry> list);
 	}
 
 	public DragDropListView(Context context) {
@@ -62,7 +61,7 @@ public class DragDropListView extends ListView implements DragDropListener {
 
 	@Override
 	public void onItemDrop(int dragItemPosition, int dropItemPosition, DropAt pos) {
-		ProfileListAdapter adapter = (ProfileListAdapter)getAdapter();
+		RuleListAdapter adapter = (RuleListAdapter)getAdapter();
 		if (dragItemPosition == dropItemPosition) {
 			return;
 		}

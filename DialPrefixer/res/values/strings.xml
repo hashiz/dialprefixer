@@ -9,6 +9,7 @@
     <string name="about_changelog_title">Changes:</string>
     <string name="about_copyright">Copyright(R) reczcgo All rights reserved.</string>
 
+    <!-- preferences -->
 	<string name="pref_category_dial_prefix">Dial Prefix</string>
 	<string name="prefs_prefix">Prefix</string>
 	<string name="prefs_callerid_deny">Deny CallerID</string>
@@ -18,4 +19,22 @@
 	<string name="pref_category_ui">User Interface</string>
 	<string name="prefs_ui_confirmnumber">Confirm Number</string>
 	<string name="prefs_ui_displaynumber">Display Number</string>
+
+	<!-- rule list item -->
+	<string name="action_icon">action icon</string>
+	<string name="rule_item_summary">rule summary</string>
+	<string name="drag_handle">drag handle</string>
+
+	<!-- rule action -->
+	<string name="rule_action_rewrite">Rewrite</string>
+
+	<!-- rule edit -->
+	<string name="name_title">Name</string>
+	<string name="name_hint">Optional</string>
+	<string name="action_title">Action</string>
+	<string name="continue_title">Continue</string>
+	<string name="pattern_title">Pattern</string>
+	<string name="pattern_hint">Regex Pattern</string>
+	<string name="negate_title">Negate</string>
+
 </resources>
