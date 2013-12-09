@@ -37,4 +37,9 @@
 	<string name="pattern_hint">Regex Pattern</string>
 	<string name="negate_title">Negate</string>
 
+	<!-- rule list context menu -->
+	<string name="action_edit_rule">Edit Rule</string>
+	<string name="action_toggle_enable_rule">Toggle Enable/Disable</string>
+	<string name="action_delete_rule">Delete Rule</string>
+
 </resources>

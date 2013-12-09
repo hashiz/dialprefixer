@@ -13,7 +13,7 @@ public class RuleEntry implements Parcelable {
 	private static final String RULEENTRY_START = "<ruleEntry>";
 	private static final String RULEENTRY_END   = "</ruleEntry>";
 
-	public static enum Key {
+	public static enum RuleColomuns {
 		UUID,
 		ORDER,
 		ENABLE,
@@ -23,57 +23,23 @@ public class RuleEntry implements Parcelable {
 		CONTINUE,
 		PATTERN,
 		NEGATE;
-
-		private final static Key[] sKeys;
-		private final static Key[] sDataKeys;
-		private final static int sSkip = 2;
-		static {
-			Key[] values = values();
-			sKeys = new Key[values.length];
-			sDataKeys = new Key[values.length-sSkip];
-			for (int i = 0; i < values.length; i++) {
-				Key key = values[i];
-				sKeys[i] = key;
-				if (i >= sSkip) {
-					sDataKeys[i-sSkip] = key;
-				}
-			}
-		};
-
-		public static Key[] getKeys() {
-			return sKeys;
-		}
-
-		public static Key[] getDataKeys() {
-			return sDataKeys;
-		}
 	}
 
 	public static enum RuleAction {
 		REWRITE;
 
-		private final static RuleAction[] sKeys;
-		private final static RuleAction[] sDataKeys;
-		private final static int sSkip = 2;
+		private final static RuleAction[] sActions;
 		static {
 			RuleAction[] values = values();
-			sKeys = new RuleAction[values.length];
-			sDataKeys = new RuleAction[values.length-sSkip];
+			sActions = new RuleAction[values.length];
 			for (int i = 0; i < values.length; i++) {
 				RuleAction key = values[i];
-				sKeys[i] = key;
-				if (i >= sSkip) {
-					sDataKeys[i-sSkip] = key;
-				}
+				sActions[i] = key;
 			}
 		};
 
-		public static RuleAction[] getKeys() {
-			return sKeys;
-		}
-
-		public static RuleAction[] getDataKeys() {
-			return sDataKeys;
+		public static RuleAction[] getActions() {
+			return sActions;
 		}
 	}
 
@@ -110,8 +76,8 @@ public class RuleEntry implements Parcelable {
 		mNegate = false;
 	}
 
-	String getValue(Key key) {
-		switch (key) {
+	String getValue(RuleColomuns col) {
+		switch (col) {
 		case UUID:
 			return getUuid().toString();
 		case ORDER:
@@ -123,7 +89,7 @@ public class RuleEntry implements Parcelable {
 		case NAME:
 			return getName();
 		case ACTION:
-			return getAction().name();
+			return getAction().toString();
 		case CONTINUE:
 			return Boolean.toString(isContinue());
 		case PATTERN:
@@ -134,10 +100,10 @@ public class RuleEntry implements Parcelable {
 		return null;
 	}
 
-	void setValue(String key, String value) {
-		Key k;
+	void setValue(String col, String value) {
+		RuleColomuns k;
 		try {
-			k = Key.valueOf(key);
+			k = RuleColomuns.valueOf(col);
 		}
 		catch (IllegalArgumentException e) {
 			e.printStackTrace();
@@ -150,13 +116,19 @@ public class RuleEntry implements Parcelable {
 		setValue(k, value);
 	}
 
-	void setValue(Key key, String value) {
+	void setValue(RuleColomuns key, String value) {
 		switch (key) {
 		case UUID:
 			setUuid(UUID.fromString(value)) ;
 			break;
 		case ORDER:
 			setOrder(Integer.parseInt(value));
+			break;
+		case ENABLE:
+			setEnable(Boolean.parseBoolean(value));
+			break;
+		case USERRULE:
+			setUserRule(Boolean.parseBoolean(value));
 			break;
 		case NAME:
 			setName(value);
@@ -173,15 +145,7 @@ public class RuleEntry implements Parcelable {
 		case NEGATE:
 			setNegate(Boolean.parseBoolean(value));
 			break;
-		case ENABLE:
-			break;
-		case USERRULE:
-			break;
 		}
-	}
-
-	static Key[] listDataKeys() {
-		return Key.getDataKeys();
 	}
 
 	public UUID getUuid() {
@@ -206,6 +170,22 @@ public class RuleEntry implements Parcelable {
 
 	public void setOrder(int order) {
 		mOrder = order;
+	}
+
+	public boolean isEnable() {
+		return mEnable;
+	}
+
+	public void setEnable(boolean enable) {
+		mEnable = enable;
+	}
+
+	public boolean isUserRule() {
+		return mUserRule;
+	}
+
+	public void setUserRule(boolean userRule) {
+		mUserRule = userRule;
 	}
 
 	public RuleAction getAction() {
@@ -254,9 +234,11 @@ public class RuleEntry implements Parcelable {
     @Override
 	public void writeToParcel(Parcel out, int flags) {
     	out.writeString(mUuid.toString());
-    	out.writeString(mName);
     	out.writeInt(mOrder);
-    	out.writeString(mAction.name());
+    	out.writeInt(mEnable ? 1 : 0);
+    	out.writeInt(mUserRule ? 1 : 0);
+    	out.writeString(mName);
+    	out.writeString(mAction.toString());
     	out.writeInt(mContinue ? 1 : 0);
     	out.writeString(mPattern);
     	out.writeInt(mNegate ? 1 : 0);
@@ -264,8 +246,10 @@ public class RuleEntry implements Parcelable {
 
 	public RuleEntry(Parcel in) {
 		mUuid                = UUID.fromString(in.readString());
-    	mName                = in.readString();
     	mOrder               = in.readInt();
+    	mEnable              = in.readInt() != 0;
+    	mUserRule            = in.readInt() != 0;
+    	mName                = in.readString();
     	mAction              = RuleAction.valueOf(in.readString());
     	mContinue            = in.readInt() != 0;
     	mPattern             = in.readString();
@@ -286,10 +270,10 @@ public class RuleEntry implements Parcelable {
     public void writeToText(BufferedWriter out) throws IOException {
     	out.write(RULEENTRY_START);
     	out.newLine();
-    	for (Key key : Key.getKeys()) {
-    		String value = getValue(key);
+    	for (RuleColomuns col : RuleColomuns.values()) {
+    		String value = getValue(col);
     		if (value != null) {
-    			out.write(key.name() + '=' + value );
+    			out.write(col.toString() + '=' + value );
     			out.newLine();
     		}
     	}

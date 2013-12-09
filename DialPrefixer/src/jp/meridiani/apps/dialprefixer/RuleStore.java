@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import jp.meridiani.apps.dialprefixer.RuleEntry.Key;
+import jp.meridiani.apps.dialprefixer.RuleEntry.RuleColomuns;
 
 import android.app.backup.BackupManager;
 import android.content.ContentValues;
@@ -30,26 +30,22 @@ public class RuleStore {
 	private static final String COL_KEY         = "key";
 	private static final String COL_VALUE       = "value";
 	
-	private static final String LIST_TABLE_NAME = "rulelist";
-	private static final String COL_UUID        = "uuid";
-	private static final String COL_ORDER       = "order";
-	
-	private static final String DATA_TABLE_NAME = "ruledata";
-	private static final String COL_ENABLE      = "enable";
-	private static final String COL_USERRULE    = "userrule";
-	private static final String COL_NAME        = "name";
-	private static final String COL_UUID        = "uuid";
-	private static final String COL_ORDER       = "order";
-	private static final String COL_UUID        = "uuid";
-	private static final String COL_ORDER       = "order";
-	private static final String COL_UUID        = "uuid";
-	private static final String COL_ORDER       = "order";
+	private static final String RULE_TABLE_NAME = "rulelist";
+	private static final String COL_UUID        = RuleColomuns.UUID.toString();
+	private static final String COL_ORDER       = RuleColomuns.ORDER.toString();
+	private static final String COL_ENABLE      = RuleColomuns.ENABLE.toString();
+	private static final String COL_USERRULE    = RuleColomuns.USERRULE.toString();
+	private static final String COL_NAME        = RuleColomuns.NAME.toString();
+	private static final String COL_ACTION      = RuleColomuns.ACTION.toString();
+	private static final String COL_CONTINUE    = RuleColomuns.CONTINUE.toString();
+	private static final String COL_PATTERN     = RuleColomuns.PATTERN.toString();
+	private static final String COL_NEGATE      = RuleColomuns.NEGATE.toString();
 	
 	private static final String KEY_ENABLERULES = "EnableRules";
 
 	private static final String RULES_START = "<rules>";
 	private static final String RULES_END   = "</rules>";
-	
+
 	private static class DBHelper extends SQLiteOpenHelper {
 
 		public DBHelper(Context context) {
@@ -63,12 +59,21 @@ public class RuleStore {
 						MISC_TABLE_NAME, COL_KEY, COL_VALUE));
 
 			db.execSQL(String.format(
-					"CREATE TABLE %1$s ( _id INTEGER PRIMARY KEY AUTOINCREMENT, %2$s TEXT NOT NULL UNIQUE, %3$s INTEGER);",
-						LIST_TABLE_NAME, COL_UUID, COL_ORDER));
-
-			db.execSQL(String.format(
-					"CREATE TABLE %1$s ( _id INTEGER PRIMARY KEY AUTOINCREMENT, %2$s TEXT NOT NULL, %3$s TEXT NOT NULL, %4$s TEXT NOT NULL);",
-						DATA_TABLE_NAME, COL_UUID, COL_KEY, COL_VALUE));
+					"CREATE TABLE %1$s ( _id INTEGER PRIMARY KEY AUTOINCREMENT, " +
+								         "%2$s TEXT NOT NULL UNIQUE, " +
+								         "%3$s INTEGER, " +
+							             "%4$s, %5$s, %6$s, %7$s, %8$s, %9$s, %10$s );",
+							RULE_TABLE_NAME,	// 1
+							COL_UUID,			// 2
+							COL_ORDER,			// 3
+							COL_NAME,			// 4
+							COL_ENABLE,			// 5
+							COL_USERRULE,		// 6
+							COL_ACTION,			// 7
+							COL_CONTINUE,		// 8
+							COL_PATTERN,		// 9
+							COL_NEGATE			// 10
+						));
 		}
 
 		@Override
@@ -88,10 +93,16 @@ public class RuleStore {
 		return mInstance;
 	}
 
-	public ArrayList<RuleEntry> listRules() {
+	public ArrayList<RuleEntry> listRules(boolean enableOnly) {
 		ArrayList<RuleEntry> list = new ArrayList<RuleEntry>();
-
-		Cursor listCur = mDB.query(LIST_TABLE_NAME, null, null, null, null, null, COL_ORDER);
+		String whereClause = null;
+		String[] whereArgs = null;
+		if (enableOnly) {
+			whereClause = COL_ENABLE + "=?";
+			whereArgs   = new String[] {Boolean.TRUE.toString()};
+		}
+		
+		Cursor listCur = mDB.query(RULE_TABLE_NAME, null, whereClause, whereArgs, null, null, COL_ORDER);
 		try {
 			while (listCur.moveToNext()) {
 				UUID uuid = UUID.fromString(listCur.getString(listCur.getColumnIndex(COL_UUID)));
@@ -118,7 +129,7 @@ public class RuleStore {
 				// update/insert list
 				values.clear();
 				values.put(COL_ORDER, ruleEntry.getOrder());
-				mDB.update(LIST_TABLE_NAME, values,
+				mDB.update(RULE_TABLE_NAME, values,
 						String.format("%1$s=?", COL_UUID),
 						new String[]{ruleEntry.getUuid().toString()});
 			}
@@ -130,36 +141,26 @@ public class RuleStore {
 		}
 	}
 
-	private RuleEntry loadRuleEntryInternal(RuleEntry profile) {
-		String uuid = profile.getUuid().toString();
-		Cursor dataCur = mDB.query(DATA_TABLE_NAME, null, COL_UUID + "=?", new String[]{uuid}, null, null, null);
+	private RuleEntry loadRuleEntryInternal(RuleEntry ruleEntry) {
+		String uuid = ruleEntry.getUuid().toString();
+		Cursor dataCur = mDB.query(RULE_TABLE_NAME, null, COL_UUID + "=?", new String[]{uuid}, null, null, null);
 		try {
-			while (dataCur.moveToNext()) {
-				String key = dataCur.getString(dataCur.getColumnIndex(COL_KEY));
-				String value = dataCur.getString(dataCur.getColumnIndex(COL_VALUE));
-				profile.setValue(key, value);
+			if (dataCur.moveToFirst()) {
+				for (String col : dataCur.getColumnNames()) {
+					String value = dataCur.getString(dataCur.getColumnIndex(col));
+					ruleEntry.setValue(col, value);
+				}
 			}
 		}
 		finally {
 			dataCur.close();
 		}
-		return profile;
+		return ruleEntry;
 	}
 
 	public RuleEntry loadRuleEntry(UUID uuid) {
-		Cursor listCur = mDB.query(LIST_TABLE_NAME, null, COL_UUID + "=?", new String[] {uuid.toString()}, null, null, null);
-		try {
-			if (listCur.moveToFirst()) {
-				int order = listCur.getInt(listCur.getColumnIndex(COL_ORDER));
-				RuleEntry ruleEntry = new RuleEntry(uuid);
-				ruleEntry.setOrder(order);
-				return loadRuleEntryInternal(ruleEntry);
-			}
-		}
-		finally {
-			listCur.close();
-		}
-		return null;
+		RuleEntry ruleEntry = new RuleEntry(uuid);
+		return loadRuleEntryInternal(ruleEntry);
 	}
 
 	public void storeRuleEntry(RuleEntry ruleEntry) {
@@ -167,30 +168,22 @@ public class RuleStore {
 
 		try {
 			ContentValues values = new ContentValues();
-			// update/insert list
-			{
-				values.clear();
-				values.put(COL_ORDER, ruleEntry.getOrder());
-				int rows = mDB.update(LIST_TABLE_NAME, values,
-						String.format("%1$s=?", COL_UUID),
-						new String[]{ruleEntry.getUuid().toString()});
-				if (rows < 1) {
-					values.put(COL_UUID, ruleEntry.getUuid().toString());
-					mDB.insert(LIST_TABLE_NAME, null, values);
+			// update/insert
+			values.clear();
+			for (RuleColomuns col : RuleColomuns.values()) {
+				if (col == RuleColomuns.UUID) {
+					// skip uuid
+					continue;
 				}
+				values.put(col.toString(), ruleEntry.getValue(col));
 			}
-			// update/insert data
-			for (Key key : RuleEntry.listDataKeys()) {
-				values.clear();
-				values.put(COL_VALUE, ruleEntry.getValue(key));
-				int rows = mDB.update(DATA_TABLE_NAME, values,
-						String.format("%1$s=? and %2$s=?", COL_UUID, COL_KEY),
-						new String[]{ruleEntry.getUuid().toString(), key.name()});
-				if (rows < 1) {
-					values.put(COL_UUID, ruleEntry.getUuid().toString());
-					values.put(COL_KEY, key.name());
-					mDB.insert(DATA_TABLE_NAME, null, values);
-				}
+			int rows = mDB.update(RULE_TABLE_NAME, // table name
+									values,          // values
+									String.format("%1$s=?", COL_UUID), // where clause
+									new String[]{ruleEntry.getUuid().toString()}); // where args
+			if (rows < 1) {
+				values.put(COL_UUID, ruleEntry.getUuid().toString());
+				mDB.insert(RULE_TABLE_NAME, null, values);
 			}
 			mDB.setTransactionSuccessful();
 			requestBackup();
@@ -200,17 +193,12 @@ public class RuleStore {
 		}
 	}
 
-	public void deleteProfile(UUID profileId) {
+	public void deleteRule(UUID uuid) {
 		mDB.beginTransaction();
 
 		try {
-			// delete existent profile
-
-			// delete data
-			mDB.delete(DATA_TABLE_NAME, COL_UUID+"=?", new String[]{profileId.toString()});
-
-			// delete list
-			mDB.delete(LIST_TABLE_NAME, COL_UUID+"=?", new String[]{profileId.toString()});
+			// delete rule
+			mDB.delete(RULE_TABLE_NAME, COL_UUID+"=?", new String[]{uuid.toString()});
 
 			mDB.setTransactionSuccessful();
 			requestBackup();
@@ -222,7 +210,7 @@ public class RuleStore {
 
 	private int getMaxOrder() {
 		Cursor listCur = mDB.rawQuery(String.format(
-				"select max(%2$s) from %1$s;", LIST_TABLE_NAME, COL_ORDER),null);
+				"select max(%2$s) from %1$s;", RULE_TABLE_NAME, COL_ORDER),null);
 		try {
 			if (listCur.moveToFirst()) {
 				return listCur.getInt(0);
@@ -280,7 +268,7 @@ public class RuleStore {
 
 	public void writeToText(BufferedWriter wtr) throws IOException {
 		wtr.write(RULES_START); wtr.newLine();
-		for (RuleEntry ruleEntry : listRules()) {
+		for (RuleEntry ruleEntry : listRules(false)) {
 			ruleEntry.writeToText(wtr);
 		}
 		wtr.write(RULES_END); wtr.newLine();

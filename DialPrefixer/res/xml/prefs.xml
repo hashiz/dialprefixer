@@ -7,7 +7,7 @@
         android:title="@string/pref_category_dial_prefix"
         >
 
-        <TextboxPreference
+        <EditTextPreference
 	        android:id="@+id/prefs_prefix_textbox"
 	        android:key="prefix"
 	        android:title="@string/prefs_prefix"
@@ -16,7 +16,7 @@
 	        android:layout_height="wrap_content"
 	        />
 	
-	    <TextboxPreference
+	    <EditTextPreference
 	        android:id="@+id/prefs_callerid_deny_textbox"
 	        android:key="callerid_deny"
 	        android:title="@string/prefs_callerid_deny"
@@ -25,7 +25,7 @@
 	        android:layout_height="wrap_content"
 	        />
 
-	    <TextboxPreference
+	    <EditTextPreference
 	        android:id="@+id/prefs_callerid_permit_textbox"
 	        android:key="callerid_permit"
 	        android:title="@string/prefs_callerid_permit"

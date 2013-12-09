@@ -2,9 +2,7 @@ package jp.meridiani.apps.dialprefixer;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
-import jp.meridiani.apps.dialplefixer.R;
 import jp.meridiani.apps.dialprefixer.DragDropListView.OnSortedListener;
 import android.content.Context;
 import android.content.Intent;
@@ -62,54 +60,46 @@ public class RuleListFragment extends Fragment implements OnItemClickListener, R
 
 		mAdapter.clear();
 
-		ArrayList<RuleEntry> plist = RuleStore.getInstance(context).listRules();
-		int selPos = -1;
-		UUID curId = RuleStore.getInstance(context).getCurrentProfile() ;
-		for ( RuleEntry profile : plist) {
-			mAdapter.add(profile);
-			if (curId != null && curId.equals(profile.getUuid())) {
-				selPos = mAdapter.getCount() - 1;
-			}
+		ArrayList<RuleEntry> ruleList = RuleStore.getInstance(context).listRules(false);
+		for ( RuleEntry ruleEntry : ruleList) {
+			mAdapter.add(ruleEntry);
 		}
-		if (selPos >= 0) {
-			mRuleListView.setItemChecked(selPos, true);
-		}
-
 		mAdapter.notifyDataSetChanged();
 	}
 
 	@Override
 	public void onItemClick(AdapterView<?> parent, View view, int pos, long id) {
 		RuleListAdapter adapter = (RuleListAdapter)parent.getAdapter();
-		RuleEntry profile = adapter.getItem(pos);
-		new AudioUtil(parent.getContext()).applyProfile(profile);
-		RuleStore.getInstance(getActivity()).setCurrentProfile(profile.getUuid());
+		RuleEntry ruleEntry = adapter.getItem(pos);
+		Intent intent = new Intent(getActivity(), RuleEditActivity.class);
+		intent.putExtra(RuleEditActivity.EXTRA_RULE_ENTRY, ruleEntry);
+		startActivity(intent);
 	}
 
 	@Override
 	public void onCreateContextMenu(ContextMenu menu, View view, ContextMenuInfo menuInfo) {
 		super.onCreateContextMenu(menu, view, menuInfo);
-		getActivity().getMenuInflater().inflate(R.menu.profile, menu);
+		getActivity().getMenuInflater().inflate(R.menu.rule_list_context, menu);
 	}
 
 	@Override
 	public boolean onContextItemSelected(MenuItem item) {
 		AdapterContextMenuInfo info = (AdapterContextMenuInfo)item.getMenuInfo();
 		int pos = info.position;
-		ListView profileListView = (ListView)getView().findViewById(R.id.profile_list);
-		RuleEntry profile = (RuleEntry)profileListView.getAdapter().getItem(pos);
+		ListView ruleListView = (ListView)getView().findViewById(R.id.rule_list);
+		RuleEntry ruleEntry = (RuleEntry)ruleListView.getAdapter().getItem(pos);
+		RuleStore ruleStore = RuleStore.getInstance(getActivity());
 		switch (item.getItemId()) {
-		case R.id.action_rename_profile:
-			ProfileNameDialog dialog = ProfileNameDialog.newInstance(profile, this, null, getString(R.string.input_dialog_rename_button), null);
-			dialog.show(getFragmentManager(), dialog.getClass().getCanonicalName());
+		case R.id.action_edit_rule:
+			startRuleEdit(ruleEntry);
 			return true;
-		case R.id.action_edit_profile:
-			Intent intent = new Intent(getActivity(), ProfileEditActivity.class);
-			intent.putExtra(ProfileEditActivity.EXTRA_PROFILE, profile);
-			startActivity(intent);
+		case R.id.action_toggle_enable_rule:
+			ruleEntry.setEnable(!ruleEntry.isEnable());
+			ruleStore.storeRuleEntry(ruleEntry);
+			updateList();
 			return true;
-		case R.id.action_delete_profile:
-			RuleStore.getInstance(getActivity()).deleteProfile(profile.getUuid());
+		case R.id.action_delete_rule:
+			ruleStore.deleteRule(ruleEntry.getUuid());
 			updateList();
 			return true;
 		}
@@ -129,5 +119,11 @@ public class RuleListFragment extends Fragment implements OnItemClickListener, R
 	@Override
 	public void onSorted(List<RuleEntry> list) {
 		RuleStore.getInstance(getActivity()).updateOrder(list);
+	}
+
+	private void startRuleEdit(RuleEntry ruleEntry) {
+		Intent intent = new Intent(getActivity(), RuleEditActivity.class);
+		intent.putExtra(RuleEditActivity.EXTRA_RULE_ENTRY, ruleEntry);
+		startActivity(intent);
 	}
 }
