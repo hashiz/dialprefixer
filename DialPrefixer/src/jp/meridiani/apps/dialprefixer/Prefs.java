@@ -3,33 +3,20 @@ package jp.meridiani.apps.dialprefixer;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
-import java.lang.reflect.Field;
 import java.util.Map;
 
-import jp.meridiani.apps.dialprefixer.R;
 import android.app.backup.BackupManager;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.preference.PreferenceManager;
-import android.provider.Settings.System;
 
 public class Prefs implements OnSharedPreferenceChangeListener {
 	private static Prefs mInstance = null;
-	static final String KEY_DISPLAYTOASTONPROFILECHANGE = "display_toast_on_profile_change";
-	static final String KEY_VIBRATEONPROFILECHANGE      = "vibrate_on_profile_change";
-	static final String KEY_PLAYSOUNDONVOLUMECHANGE     = "play_sound_on_volume_change";
-	static final String KEY_SOUNDLEVELALERTHACK         = "sound_level_alert_hack";
-	static final String KEY_DISPLAYTOASTONVOLUMELOCK    = "display_toast_on_volume_lock";
 
 	private static final String PREFS_START = "<preferences>";
 	private static final String PREFS_END   = "</preferences>";
-
-	// for cyanogenmod
-	private static final String VOLUME_LINK_NOTIFICATION = "VOLUME_LINK_NOTIFICATION";
-	private boolean mHasVolumeLinkNotification = false;
-	private String  mKeyVolumeLinkNotification = null;
 
 	private Context mContext;
 	private SharedPreferences mSharedPrefs;
@@ -43,20 +30,6 @@ public class Prefs implements OnSharedPreferenceChangeListener {
 		mSharedPrefs = PreferenceManager.getDefaultSharedPreferences(context);
 		PreferenceManager.setDefaultValues(context, getPrefsResId(), false);
 		mSharedPrefs.registerOnSharedPreferenceChangeListener(this);
-		Class<System> c = android.provider.Settings.System.class;
-		try {
-			Field f = c.getField(VOLUME_LINK_NOTIFICATION);
-			mKeyVolumeLinkNotification = (String)f.get(null);
-			mHasVolumeLinkNotification = true;
-		} catch (NoSuchFieldException e) {
-			e.printStackTrace();
-		} catch (IllegalArgumentException e) {
-			e.printStackTrace();
-		} catch (IllegalAccessException e) {
-			e.printStackTrace();
-		} catch (ClassCastException e) {
-			e.printStackTrace();
-		}
 	}
 
 	public static synchronized Prefs getInstance(Context context) {
@@ -87,41 +60,6 @@ public class Prefs implements OnSharedPreferenceChangeListener {
 		editor.apply();
 	}
 
-	public boolean isDisplayToastOnProfileChange() {
-		return mSharedPrefs.getBoolean(KEY_DISPLAYTOASTONPROFILECHANGE, true);
-	}
-	public void setDisplayToastOnProfileChange(boolean value) {
-		setBooleanValue(KEY_DISPLAYTOASTONPROFILECHANGE, value);
-	}
-
-	public boolean isVibrateOnProfileChange() {
-		return mSharedPrefs.getBoolean(KEY_VIBRATEONPROFILECHANGE, true);
-	}
-	public void setVibrateOnProfileChange(boolean value) {
-		setBooleanValue(KEY_VIBRATEONPROFILECHANGE, value);
-	}
-
-	public boolean isPlaySoundOnVolumeChange() {
-		return mSharedPrefs.getBoolean(KEY_PLAYSOUNDONVOLUMECHANGE, true);
-	}
-	public void setPlaySoundOnVolumeChange(boolean value) {
-		setBooleanValue(KEY_PLAYSOUNDONVOLUMECHANGE, value);
-	}
-
-	public boolean isSoundLevelAlertHack() {
-		return mSharedPrefs.getBoolean(KEY_SOUNDLEVELALERTHACK, true);
-	}
-	public void setSoundLevelAlertHack(boolean value) {
-		setBooleanValue(KEY_SOUNDLEVELALERTHACK, value);
-	}
-
-	public boolean isDisplayToastOnVolumeLock() {
-		return mSharedPrefs.getBoolean(KEY_DISPLAYTOASTONVOLUMELOCK, false);
-	}
-	public void setDisplayToastOnVolumeLock(boolean value) {
-		setBooleanValue(KEY_DISPLAYTOASTONVOLUMELOCK, value);
-	}
-
 	public void writeToText(BufferedWriter wtr) throws IOException {
 		Map <String, ?> map = mSharedPrefs.getAll();
 		wtr.write(PREFS_START); wtr.newLine();
@@ -129,29 +67,6 @@ public class Prefs implements OnSharedPreferenceChangeListener {
 			wtr.write(key + "=" + map.get(key)); wtr.newLine();
 		}
 		wtr.write(PREFS_END); wtr.newLine();
-	}
-
-	public boolean hasVolumeLinkNotification() {
-		return mHasVolumeLinkNotification;
-	}
-
-	public void setVolumeLinkNotification(boolean link) {
-		if (! hasVolumeLinkNotification()) {
-			return;
-		}
-		int value = 0;
-		if (link) {
-			value = 1;
-		}
-		android.provider.Settings.System.putInt(mContext.getContentResolver(), mKeyVolumeLinkNotification, value);
-	}
-
-	public boolean isVolumeLinkNotification() {
-		if (! hasVolumeLinkNotification()) {
-			return true;
-		}
-		int linkNotification = 	android.provider.Settings.System.getInt(mContext.getContentResolver(), mKeyVolumeLinkNotification, 1);
-		return linkNotification == 1;
 	}
 
 	public void setFromText(BufferedReader rdr) throws IOException {

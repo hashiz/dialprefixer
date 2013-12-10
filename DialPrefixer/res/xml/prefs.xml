@@ -11,16 +11,21 @@
 	        android:id="@+id/prefs_prefix_textbox"
 	        android:key="prefix"
 	        android:title="@string/prefs_prefix"
-	        android:defaultValue="0063"
+	        android:dialogTitle="@string/prefs_prefix_dialog"
+	        android:hint="@string/prefs_prefix_hint"
+	        android:inputType="phone"
+	        android:defaultValue="@string/default_prefix"
 	        android:layout_width="wrap_content"
-	        android:layout_height="wrap_content"
-	        />
+	        android:layout_height="wrap_content" />
 	
 	    <EditTextPreference
 	        android:id="@+id/prefs_callerid_deny_textbox"
 	        android:key="callerid_deny"
 	        android:title="@string/prefs_callerid_deny"
-	        android:defaultValue="184"
+	        android:dialogTitle="@string/prefs_callerid_deny_dialog"
+	        android:hint="@string/prefs_callerid_deny_hint"
+	        android:inputType="phone"
+	        android:defaultValue="@string/default_callerid_deny"
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
 	        />
@@ -29,7 +34,10 @@
 	        android:id="@+id/prefs_callerid_permit_textbox"
 	        android:key="callerid_permit"
 	        android:title="@string/prefs_callerid_permit"
-	        android:defaultValue="186"
+	        android:dialogTitle="@string/prefs_callerid_permit_dialog"
+	        android:hint="@string/prefs_callerid_permit_hint"
+	        android:inputType="phone"
+	        android:defaultValue="@string/default_callerid_permit"
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
 	        />

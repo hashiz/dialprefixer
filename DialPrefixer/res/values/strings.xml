@@ -4,16 +4,26 @@
     <string name="app_name">Dial Prefixer</string>
     <string name="action_settings">Settings</string>
     <string name="action_about">About</string>
-    <string name="title_activity_preference">Settings</string>
+    <string name="activity_preference_title">Settings</string>
+    <string name="activity_about_title">About</string>
     <string name="about_version_title">Version:</string>
     <string name="about_changelog_title">Changes:</string>
     <string name="about_copyright">Copyright(R) reczcgo All rights reserved.</string>
 
     <!-- preferences -->
 	<string name="pref_category_dial_prefix">Dial Prefix</string>
-	<string name="prefs_prefix">Prefix</string>
-	<string name="prefs_callerid_deny">Deny CallerID</string>
-	<string name="prefs_callerid_permit">Permit CallerID</string>
+	<string name="prefs_prefix">Prefix(%p)</string>
+	<string name="prefs_prefix_dialog">Prefix</string>
+	<string name="prefs_prefix_hint">Number of dial prefix</string>
+	<string name="default_prefix">0063</string>
+	<string name="prefs_callerid_deny">Deny Caller ID(%d)</string>
+	<string name="prefs_callerid_deny_dialog">Prefix of deny Caller ID notification</string>
+	<string name="prefs_callerid_deny_hint">Prefix of deny Caller ID notification</string>
+	<string name="default_callerid_deny">184</string>
+	<string name="prefs_callerid_permit">Permit Caller ID(%r)</string>
+	<string name="prefs_callerid_permit_dialog">Prefix of permit Caller ID notification</string>
+	<string name="prefs_callerid_permit_hint">Prefix of permit Caller ID notification</string>
+	<string name="default_callerid_permit">186</string>
 	<string name="pref_category_calllog">Call Log</string>
 	<string name="prefs_calllog_deleteprefix">Delete Prefix</string>
 	<string name="pref_category_ui">User Interface</string>
@@ -40,6 +50,7 @@
 	<!-- rule list context menu -->
 	<string name="action_edit_rule">Edit Rule</string>
 	<string name="action_toggle_enable_rule">Toggle Enable/Disable</string>
+	<string name="action_clone_rule">Clone Rule</string>
 	<string name="action_delete_rule">Delete Rule</string>
 
 </resources>
