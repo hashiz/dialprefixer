@@ -4,6 +4,8 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.util.UUID;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -15,7 +17,7 @@ public class RuleEntry implements Parcelable {
 
 	public static enum RuleColomuns {
 		UUID,
-		ORDER,
+		RULEORDER,
 		ENABLE,
 		USERRULE,
 		NAME,
@@ -69,6 +71,9 @@ public class RuleEntry implements Parcelable {
 		mOrder = 0;
 		mName = "";
 
+		mEnable = true;
+		mUserRule = true;
+		
 		mAction = RuleAction.REWRITE;
 		mContinue = true;
 
@@ -80,7 +85,7 @@ public class RuleEntry implements Parcelable {
 		switch (col) {
 		case UUID:
 			return getUuid().toString();
-		case ORDER:
+		case RULEORDER:
 			return Integer.toString(getOrder());
 		case ENABLE:
 			return Boolean.toString(isEnable());
@@ -121,7 +126,7 @@ public class RuleEntry implements Parcelable {
 		case UUID:
 			setUuid(UUID.fromString(value)) ;
 			break;
-		case ORDER:
+		case RULEORDER:
 			setOrder(Integer.parseInt(value));
 			break;
 		case ENABLE:
@@ -212,6 +217,32 @@ public class RuleEntry implements Parcelable {
 		mPattern = pattern;
 	}
 
+	public String getPatternEvaluted(Prefs prefs) {
+		StringBuffer buf = new StringBuffer();
+		String prefix = prefs.getPrefix();
+		String deny   = prefs.getCallerIdDeny();
+		String permit = prefs.getCallerIdPermit();
+
+		Pattern p = Pattern.compile("(%p|%d|%r)");
+		Matcher m = p.matcher(mPattern);
+		while (m.find()) {
+			String match = m.group();
+			String replacement = null;
+			if (match.equals("%p")) {
+				replacement = prefix;
+			}
+			else if (match.equals("%d")) {
+				replacement = deny;
+			}
+			else if (match.equals("%r")) {
+				replacement = permit;
+			}
+			m.appendReplacement(buf, replacement);
+		}
+		m.appendTail(buf);
+		return buf.toString();
+	}
+
 	public boolean isNegate() {
 		return mNegate;
 	}
@@ -223,7 +254,12 @@ public class RuleEntry implements Parcelable {
 	
 	@Override
 	public String toString() {
-		return this.getName();
+		if (mName != null && !mName.isEmpty()) {
+			return mName;
+		}
+		else {
+			return mPattern;
+		}
 	}
 
 	@Override

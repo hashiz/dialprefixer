@@ -1,23 +1,23 @@
 package jp.meridiani.apps.dialprefixer;
 
-import android.app.ActionBar;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentTransaction;
 import android.view.Menu;
 import android.view.MenuItem;
 
 public class DialPrefixerActivity extends FragmentActivity {
+	public static final String TAG_RULE_LIST = "rule_list_fragment";
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 
-		// Set up the action bar.
-		final ActionBar actionBar = getActionBar();
-		actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
-
+		FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+		transaction.add(R.id.activity_main, RuleListFragment.newInstance(), TAG_RULE_LIST);
+		transaction.commit();
 	}
 	
 	@Override
@@ -47,6 +47,11 @@ public class DialPrefixerActivity extends FragmentActivity {
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
+		case R.id.action_add_rule:
+			Intent i = new Intent(this, RuleEditActivity.class);
+			i.putExtra(RuleEditActivity.EXTRA_RULE_ENTRY, new RuleEntry());
+			startActivity(i);
+			return true;
 		case R.id.action_settings:
 			startActivity(new Intent(this, PreferencesActivity.class));
 			return true;

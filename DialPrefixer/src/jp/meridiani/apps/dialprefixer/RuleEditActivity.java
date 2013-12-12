@@ -1,6 +1,5 @@
 package jp.meridiani.apps.dialprefixer;
 
-import jp.meridiani.apps.dialprefixer.R;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
@@ -29,4 +28,5 @@ public class RuleEditActivity extends FragmentActivity {
 		transaction.add(R.id.activity_rule_edit, RuleEditFragment.newInstance(ruleEntry), TAG_RULE_EDIT);
 		transaction.commit();
 	}
+
 }

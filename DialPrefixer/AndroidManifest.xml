@@ -23,6 +23,13 @@
             </intent-filter>
         </activity>
         <activity
+            android:name=".RuleEditActivity"
+            android:label="@string/activity_rule_edit_title" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".DialPrefixerActivity" />
+        </activity>
+        <activity
             android:name=".PreferencesActivity"
             android:label="@string/activity_preference_title" >
             <meta-data

@@ -7,6 +7,15 @@
         android:title="@string/pref_category_dial_prefix"
         >
 
+        <CheckBoxPreference
+            android:id="@+id/prefs_enable_add_prefix_checkbox"
+            android:key="enable_add_prefix"
+            android:title="@string/prefs_enable_add_prefix"
+		    android:defaultValue="false"
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+            />
+        
         <EditTextPreference
 	        android:id="@+id/prefs_prefix_textbox"
 	        android:key="prefix"
@@ -51,7 +60,7 @@
 		    android:id="@+id/prefs_calllog_deleteprefix_checkbox"
 		    android:key="calllog_deleteprefix"
 		    android:title="@string/prefs_calllog_deleteprefix"
-		    android:defaultValue="true"
+		    android:defaultValue="false"
 		    android:layout_width="wrap_content"
 		    android:layout_height="wrap_content"
 		    />

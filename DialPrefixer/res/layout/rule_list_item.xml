@@ -18,23 +18,22 @@
         />
 
     <TextView
-	    android:id="@+id/rule_item_summary"
-	    android:layout_width="match_parent"
-	    android:layout_height="?android:attr/listPreferredItemHeight"
-	    android:textAppearance="?android:attr/textAppearanceLarge"
-	    android:gravity="center_vertical"
-	    android:paddingLeft="6dip"
-	    android:paddingRight="6dip"
-	    android:text="@string/rule_item_summary"
-		/>
+        android:id="@+id/rule_item_summary"
+        android:layout_width="match_parent"
+        android:layout_height="?android:attr/listPreferredItemHeight"
+        android:layout_weight="1"
+        android:gravity="center_vertical"
+        android:paddingLeft="6dip"
+        android:paddingRight="6dip"
+        android:text="@string/rule_item_summary"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
 
     <ImageView
         android:id="@+id/drag_handle"
-        android:tag="drag_handle"
-        android:src="@android:drawable/ic_menu_sort_by_size"
-        android:contentDescription="@string/drag_handle"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        />
+        android:contentDescription="@string/drag_handle"
+        android:src="@android:drawable/ic_menu_sort_by_size"
+        android:tag="drag_handle" />
 
 </jp.meridiani.apps.dialprefixer.DragDropListItem>

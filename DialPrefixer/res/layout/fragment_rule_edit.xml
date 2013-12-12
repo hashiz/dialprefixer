@@ -21,8 +21,7 @@
             android:id="@+id/name_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:paddingTop="@dimen/activity_vertical_margin" >
+            android:orientation="vertical">
 
             <TextView
 				android:id="@+id/name_title"
@@ -33,7 +32,7 @@
             <EditText
                 android:id="@+id/name_value"
                 android:hint="@string/name_hint"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="" />
 
@@ -46,7 +45,7 @@
             android:id="@+id/action_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal" >
+            android:orientation="vertical" >
 
             <TextView
                 android:id="@+id/action_title"
@@ -69,20 +68,19 @@
             android:id="@+id/continue_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:paddingTop="@dimen/activity_vertical_margin" >
-
-            <TextView
-				android:id="@+id/continue_title"
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:text="@string/continue_title" />
+            android:orientation="horizontal">
 
             <CheckBox
                 android:id="@+id/continue_value"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="" />
+
+            <TextView
+				android:id="@+id/continue_title"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:text="@string/continue_title" />
 
 		</LinearLayout>
 
@@ -93,8 +91,7 @@
             android:id="@+id/pattern_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:paddingTop="@dimen/activity_vertical_margin" >
+            android:orientation="vertical">
 
             <TextView
 				android:id="@+id/pattern_title"
@@ -105,7 +102,7 @@
             <EditText
                 android:id="@+id/pattern_value"
                 android:hint="@string/pattern_hint"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="" />
 
@@ -118,14 +115,7 @@
             android:id="@+id/negate_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:paddingTop="@dimen/activity_vertical_margin" >
-
-            <TextView
-				android:id="@+id/negate_title"
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:text="@string/negate_title" />
+            android:orientation="horizontal">
 
             <CheckBox
                 android:id="@+id/negate_value"
@@ -133,7 +123,13 @@
                 android:layout_height="wrap_content"
                 android:text="" />
 
-		</LinearLayout>
+            <TextView
+				android:id="@+id/negate_title"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:text="@string/negate_title" />
+
+        </LinearLayout>
     </LinearLayout>
 
 </ScrollView>

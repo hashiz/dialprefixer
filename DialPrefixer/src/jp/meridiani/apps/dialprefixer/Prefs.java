@@ -18,6 +18,14 @@ public class Prefs implements OnSharedPreferenceChangeListener {
 	private static final String PREFS_START = "<preferences>";
 	private static final String PREFS_END   = "</preferences>";
 
+	static final String KEY_ENABLE_ADD_PREFIX    = "enable_add_prefix";
+	static final String KEY_PREFIX               = "prefix";
+	static final String KEY_CALLERID_DENY        = "callerid_deny";
+	static final String KEY_CALLERID_PERMIT      = "callerid_permit";
+	static final String KEY_CALLLOG_DELETEPREFIX = "calllog_deleteprefix";
+	static final String KEY_CONFIRMNUMBER        = "confirmnumber";
+    static final String KEY_DISPLAYNUMBER        = "displaynumber";
+
 	private Context mContext;
 	private SharedPreferences mSharedPrefs;
 
@@ -51,13 +59,37 @@ public class Prefs implements OnSharedPreferenceChangeListener {
 	}
 
 	private void setValue(String key, String value) {
-		setBooleanValue(key, Boolean.parseBoolean(value));
+		Editor editor = mSharedPrefs.edit();
+		editor.putString(key, value);
+		editor.apply();
 	}
 
-	private void setBooleanValue(String key, boolean value) {
-		Editor editor = mSharedPrefs.edit();
-		editor.putBoolean(key, value);
-		editor.apply();
+	public boolean isEnableAddPrefix() {
+		return mSharedPrefs.getBoolean(KEY_ENABLE_ADD_PREFIX, false);
+	}
+
+	public String getPrefix() {
+		return mSharedPrefs.getString(KEY_PREFIX, "");
+	}
+
+	public String getCallerIdDeny() {
+		return mSharedPrefs.getString(KEY_CALLERID_DENY, "");
+	}
+
+	public String getCallerIdPermit() {
+		return mSharedPrefs.getString(KEY_CALLERID_PERMIT, "");
+	}
+
+	public boolean isCallLogDeletePrefix() {
+		return mSharedPrefs.getBoolean(KEY_CALLLOG_DELETEPREFIX, false);
+	}
+
+	public boolean isConfirmNumber() {
+		return mSharedPrefs.getBoolean(KEY_CONFIRMNUMBER, true);
+	}
+
+	public boolean isDisplayNumber() {
+		return mSharedPrefs.getBoolean(KEY_DISPLAYNUMBER, true);
 	}
 
 	public void writeToText(BufferedWriter wtr) throws IOException {

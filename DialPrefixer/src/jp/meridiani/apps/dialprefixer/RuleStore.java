@@ -32,7 +32,7 @@ public class RuleStore {
 	
 	private static final String RULE_TABLE_NAME = "rulelist";
 	private static final String COL_UUID        = RuleColomuns.UUID.toString();
-	private static final String COL_ORDER       = RuleColomuns.ORDER.toString();
+	private static final String COL_RULEORDER   = RuleColomuns.RULEORDER.toString();
 	private static final String COL_ENABLE      = RuleColomuns.ENABLE.toString();
 	private static final String COL_USERRULE    = RuleColomuns.USERRULE.toString();
 	private static final String COL_NAME        = RuleColomuns.NAME.toString();
@@ -65,7 +65,7 @@ public class RuleStore {
 							             "%4$s, %5$s, %6$s, %7$s, %8$s, %9$s, %10$s );",
 							RULE_TABLE_NAME,	// 1
 							COL_UUID,			// 2
-							COL_ORDER,			// 3
+							COL_RULEORDER,		// 3
 							COL_NAME,			// 4
 							COL_ENABLE,			// 5
 							COL_USERRULE,		// 6
@@ -102,11 +102,11 @@ public class RuleStore {
 			whereArgs   = new String[] {Boolean.TRUE.toString()};
 		}
 		
-		Cursor listCur = mDB.query(RULE_TABLE_NAME, null, whereClause, whereArgs, null, null, COL_ORDER);
+		Cursor listCur = mDB.query(RULE_TABLE_NAME, null, whereClause, whereArgs, null, null, COL_RULEORDER);
 		try {
 			while (listCur.moveToNext()) {
 				UUID uuid = UUID.fromString(listCur.getString(listCur.getColumnIndex(COL_UUID)));
-				int order = listCur.getInt(listCur.getColumnIndex(COL_ORDER));
+				int order = listCur.getInt(listCur.getColumnIndex(COL_RULEORDER));
 				RuleEntry ruleEntry = new RuleEntry(uuid);
 				ruleEntry.setOrder(order);
 				loadRuleEntryInternal(ruleEntry);
@@ -128,7 +128,7 @@ public class RuleStore {
 			for (RuleEntry ruleEntry : list) {
 				// update/insert list
 				values.clear();
-				values.put(COL_ORDER, ruleEntry.getOrder());
+				values.put(COL_RULEORDER, ruleEntry.getOrder());
 				mDB.update(RULE_TABLE_NAME, values,
 						String.format("%1$s=?", COL_UUID),
 						new String[]{ruleEntry.getUuid().toString()});
@@ -165,6 +165,10 @@ public class RuleStore {
 
 	public void storeRuleEntry(RuleEntry ruleEntry) {
 		mDB.beginTransaction();
+
+		if (ruleEntry.getOrder() == 0) {
+			ruleEntry.setOrder(getMaxOrder()+1);
+		}
 
 		try {
 			ContentValues values = new ContentValues();
@@ -210,7 +214,7 @@ public class RuleStore {
 
 	private int getMaxOrder() {
 		Cursor listCur = mDB.rawQuery(String.format(
-				"select max(%2$s) from %1$s;", RULE_TABLE_NAME, COL_ORDER),null);
+				"select max(%2$s) from %1$s;", RULE_TABLE_NAME, COL_RULEORDER),null);
 		try {
 			if (listCur.moveToFirst()) {
 				return listCur.getInt(0);
@@ -258,12 +262,6 @@ public class RuleStore {
 		finally {
 			mDB.endTransaction();
 		}
-	}
-
-	public RuleEntry newRuleEntry() {
-		RuleEntry ruleEntry = new RuleEntry();
-		ruleEntry.setOrder(getMaxOrder()+1);
-		return ruleEntry;
 	}
 
 	public void writeToText(BufferedWriter wtr) throws IOException {
