@@ -3,18 +3,20 @@ package jp.meridiani.apps.dialprefixer;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 import jp.meridiani.apps.dialprefixer.RuleEntry.RuleColomuns;
-
 import android.app.backup.BackupManager;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.database.sqlite.SQLiteStatement;
 
 public class RuleStore {
 
@@ -23,9 +25,11 @@ public class RuleStore {
 	private SQLiteDatabase mDB;
 	private Context mContext;
 
+	private static final String DEFAULT_RULE_FILE = "default_rule.tsv";
+
 	private static final String DATABASE_NAME = "rulelist.db";
 	private static final int    DATABASE_VERSION = 1;
-	  
+
 	private static final String MISC_TABLE_NAME = "misc";
 	private static final String COL_KEY         = "key";
 	private static final String COL_VALUE       = "value";
@@ -40,16 +44,18 @@ public class RuleStore {
 	private static final String COL_CONTINUE    = RuleColomuns.CONTINUE.toString();
 	private static final String COL_PATTERN     = RuleColomuns.PATTERN.toString();
 	private static final String COL_NEGATE      = RuleColomuns.NEGATE.toString();
+	private static final String COL_REPLACEMENT = RuleColomuns.REPLACEMENT.toString();
 	
-	private static final String KEY_ENABLERULES = "EnableRules";
-
 	private static final String RULES_START = "<rules>";
 	private static final String RULES_END   = "</rules>";
 
 	private static class DBHelper extends SQLiteOpenHelper {
 
+		private Context mContext;
+
 		public DBHelper(Context context) {
 			super(context, DATABASE_NAME, null, DATABASE_VERSION);
+			mContext = context;
 		}
 
 		@Override
@@ -62,7 +68,7 @@ public class RuleStore {
 					"CREATE TABLE %1$s ( _id INTEGER PRIMARY KEY AUTOINCREMENT, " +
 								         "%2$s TEXT NOT NULL UNIQUE, " +
 								         "%3$s INTEGER, " +
-							             "%4$s, %5$s, %6$s, %7$s, %8$s, %9$s, %10$s );",
+							             "%4$s, %5$s, %6$s, %7$s, %8$s, %9$s, %10$s, %11$s );",
 							RULE_TABLE_NAME,	// 1
 							COL_UUID,			// 2
 							COL_RULEORDER,		// 3
@@ -72,12 +78,60 @@ public class RuleStore {
 							COL_ACTION,			// 7
 							COL_CONTINUE,		// 8
 							COL_PATTERN,		// 9
-							COL_NEGATE			// 10
+							COL_NEGATE,			// 10
+							COL_REPLACEMENT		// 11
 						));
+
+			loadDefaultRule(db);
 		}
 
 		@Override
 		public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+		}
+
+		private String join(String s, String[] a) {
+			StringBuilder buf = new StringBuilder();
+			String sep = "";
+			for (String p : a) {
+				buf.append(sep).append(p);
+				sep = s;
+			}
+			return buf.toString();
+		}
+
+		private String getChars(String s, String c, int count) {
+			StringBuilder buf = new StringBuilder();
+			String sep = "";
+			for (int i = 0; i < count; i++ ) {
+				buf.append(sep).append(c);
+				sep = s;
+			}
+			return buf.toString();
+		}
+		
+		private void loadDefaultRule(SQLiteDatabase db) {
+			try {
+				InputStream input = mContext.getResources().getAssets().open(DEFAULT_RULE_FILE);
+				BufferedReader rdr = new BufferedReader(new InputStreamReader(input));
+				String line;
+				line = rdr.readLine();
+				if (line == null) {
+					return;
+				}
+				String[] colnames = line.split("\t");
+				SQLiteStatement stm = db.compileStatement("INSERT INTO " + RULE_TABLE_NAME + 
+						" ( " + join(",", colnames) +" ) " +
+						"VALUES ( " + getChars(",", "?", colnames.length)+ " );");
+				while ((line = rdr.readLine())!= null) {
+					stm.bindAllArgsAsStrings(line.split("\t"));
+					stm.executeInsert();
+					stm.clearBindings();
+				}
+				stm.close();
+			}
+			catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 
@@ -224,44 +278,6 @@ public class RuleStore {
 			listCur.close();
 		}
 		return 0;
-	}
-
-	public boolean isEnableRules() {
-		Cursor cur = mDB.query(MISC_TABLE_NAME, null, COL_KEY + "=?", new String[] {KEY_ENABLERULES}, null, null, null);
-		try {
-			if (cur.moveToFirst()) {
-				return Boolean.parseBoolean(cur.getString(cur.getColumnIndex(COL_VALUE)));
-			}
-		}
-		finally {
-			cur.close();
-		}
-		return false;
-	}
-
-	public void setEnableRules(boolean enable) {
-		mDB.beginTransaction();
-
-		try {
-			ContentValues values = new ContentValues();
-
-			// update/insert data
-			values.put(COL_KEY,   KEY_ENABLERULES);
-			values.put(COL_VALUE, Boolean.toString(enable));
-			int rows = mDB.update(MISC_TABLE_NAME, values,
-					String.format("%1$s=?", COL_KEY),
-					new String[]{KEY_ENABLERULES});
-			if (rows < 1) {
-				values.put(COL_KEY,   KEY_ENABLERULES);
-				values.put(COL_VALUE, Boolean.toString(enable));
-				mDB.insert(MISC_TABLE_NAME, null, values);
-			}
-
-			mDB.setTransactionSuccessful();
-		}
-		finally {
-			mDB.endTransaction();
-		}
 	}
 
 	public void writeToText(BufferedWriter wtr) throws IOException {

@@ -24,10 +24,12 @@ public class RuleEntry implements Parcelable {
 		ACTION,
 		CONTINUE,
 		PATTERN,
-		NEGATE;
+		NEGATE,
+		REPLACEMENT,
 	}
 
 	public static enum RuleAction {
+		CHECK,
 		REWRITE;
 
 		private final static RuleAction[] sActions;
@@ -57,6 +59,7 @@ public class RuleEntry implements Parcelable {
 
 	private String mPattern;
 	private boolean mNegate;
+	private String mReplacement;
 	
 	RuleEntry() {
 		this((UUID)null);
@@ -79,6 +82,7 @@ public class RuleEntry implements Parcelable {
 
 		mPattern = "";
 		mNegate = false;
+		mReplacement = "";
 	}
 
 	String getValue(RuleColomuns col) {
@@ -101,6 +105,8 @@ public class RuleEntry implements Parcelable {
 			return getPattern();
 		case NEGATE:
 			return Boolean.toString(isNegate());
+		case REPLACEMENT:
+			return getReplacement();
 		}
 		return null;
 	}
@@ -149,6 +155,9 @@ public class RuleEntry implements Parcelable {
 			break;
 		case NEGATE:
 			setNegate(Boolean.parseBoolean(value));
+			break;
+		case REPLACEMENT:
+			setReplacement(value);
 			break;
 		}
 	}
@@ -217,14 +226,14 @@ public class RuleEntry implements Parcelable {
 		mPattern = pattern;
 	}
 
-	public String getPatternEvaluted(Prefs prefs) {
+	private String evalute(Prefs prefs, String origPattern) {
 		StringBuffer buf = new StringBuffer();
 		String prefix = prefs.getPrefix();
 		String deny   = prefs.getCallerIdDeny();
 		String permit = prefs.getCallerIdPermit();
 
 		Pattern p = Pattern.compile("(%p|%d|%r)");
-		Matcher m = p.matcher(mPattern);
+		Matcher m = p.matcher(origPattern);
 		while (m.find()) {
 			String match = m.group();
 			String replacement = null;
@@ -243,6 +252,10 @@ public class RuleEntry implements Parcelable {
 		return buf.toString();
 	}
 
+	public String getPatternEvaluted(Prefs prefs) {
+		return evalute(prefs, mPattern);
+	}
+
 	public boolean isNegate() {
 		return mNegate;
 	}
@@ -251,6 +264,18 @@ public class RuleEntry implements Parcelable {
 		mNegate = negate;
 	}
 	
+	public String getReplacement() {
+		return mReplacement;
+	}
+
+	public void setReplacement(String replacement) {
+		mReplacement = replacement;
+	}
+
+	public String getReplacementEvaluted(Prefs prefs) {
+		return evalute(prefs, mReplacement);
+	}
+
 	
 	@Override
 	public String toString() {

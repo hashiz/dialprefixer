@@ -11,12 +11,13 @@
     <string name="activity_about_title">About</string>
     <string name="about_version_title">Version:</string>
     <string name="about_changelog_title">Changes:</string>
-    <string name="about_copyright">Copyright(R) reczcgo All rights reserved.</string>
+    <string name="about_copyright">Copyright(R) 2013 reczcgo All rights reserved.</string>
 
     <!-- rule edit -->
 	<string name="activity_rule_edit_title">Rule Edit</string>
 	<string name="action_save_rule">Save</string>
 	<string name="action_cancel_rule">Cancel</string>
+	<string name="enable_title">Enable</string>
 	<string name="name_title">Name</string>
 	<string name="name_hint">Optional</string>
 	<string name="action_title">Action</string>
@@ -24,8 +25,11 @@
 	<string name="pattern_title">Pattern</string>
 	<string name="pattern_hint">Regex Pattern</string>
 	<string name="negate_title">Negate</string>
+	<string name="replacement_title">Replacement</string>
+	<string name="replacement_hint">Regex Replacement</string>
+	<string name="rule_action_check">Check</string>
 	<string name="rule_action_rewrite">Rewrite</string>
-
+	
     <!-- preferences -->
     <string name="activity_preference_title">Settings</string>
 	<string name="pref_category_dial_prefix">Dial Prefix</string>

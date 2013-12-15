@@ -13,8 +13,12 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
 import android.widget.Spinner;
 
@@ -23,7 +27,12 @@ public class RuleEditFragment extends Fragment {
 	private static final String BUNDLE_RULE_ENTRY = "ruleEntry";
 
 	private RuleEntry mRuleEntry = null;
-	
+
+	// listener
+	private TextWatcher             mNameChangedListener;
+	private TextWatcher             mPatternChangedListener;
+	private TextWatcher             mReplacementChangedListener;
+
 	private class ActionItem {
 		private RuleAction mRuleAction = null;
 		private String     mString = null;
@@ -31,6 +40,9 @@ public class RuleEditFragment extends Fragment {
 		public ActionItem(Context context, RuleAction action) {
 			mRuleAction = action;
 			switch (mRuleAction) {
+			case CHECK:
+				mString = context.getString(R.string.rule_action_check);
+				break;
 			case REWRITE:
 				mString = context.getString(R.string.rule_action_rewrite);
 				break;
@@ -105,6 +117,7 @@ public class RuleEditFragment extends Fragment {
 
 		RuleActionAdapter adapter = new RuleActionAdapter(activity,
 				android.R.layout.simple_spinner_item);
+		adapter.add(new ActionItem(activity, RuleAction.CHECK));
 		adapter.add(new ActionItem(activity, RuleAction.REWRITE));
 		adapter.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
 		actionView.setAdapter(adapter);
@@ -133,49 +146,182 @@ public class RuleEditFragment extends Fragment {
 	public void onResume() {
 		super.onResume();
 
-		View rootView = getView();
+		final View rootView = getView();
 
 		// set value
 
+		// enable
+		CheckBox enable = (CheckBox)rootView.findViewById(R.id.enable_value);
+		enable.setChecked(mRuleEntry.isEnable());
+		enable.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+			
+			@Override
+			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+				mRuleEntry.setEnable(isChecked);
+			}
+		});
+		
 		// name
 		EditText name = (EditText)rootView.findViewById(R.id.name_value);
 		name.setText(mRuleEntry.getName());
-		name.addTextChangedListener(new TextWatcher() {
+		name.addTextChangedListener(mNameChangedListener = new TextWatcher() {
 
 			@Override
-			public void beforeTextChanged(CharSequence paramCharSequence,
-					int paramInt1, int paramInt2, int paramInt3) {
-				// nop
+			public void afterTextChanged(Editable s) {
+				mRuleEntry.setName(s.toString());
 			}
 
 			@Override
-			public void onTextChanged(CharSequence paramCharSequence,
-					int paramInt1, int paramInt2, int paramInt3) {
-				// nop
+			public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+				// NOP
 			}
 
 			@Override
-			public void afterTextChanged(Editable paramEditable) {
-				// nop
+			public void onTextChanged(CharSequence s, int start, int before,	int count) {
+				// NOP
 			}
-			
 		});
+		if (!mRuleEntry.isUserRule()) {
+			name.setEnabled(false);
+		}
 
 		// action
 		Spinner action = (Spinner)rootView.findViewById(R.id.action_value);
 		action.setSelection(((RuleActionAdapter)action.getAdapter()).getPosition(mRuleEntry.getAction()));
+		action.setOnItemSelectedListener(new OnItemSelectedListener() {
+
+			@Override
+			public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+				RuleAction action = ((ActionItem)parent.getAdapter().getItem(position)).getValue();
+				mRuleEntry.setAction(action);
+				switch (action) {
+				case CHECK:
+					rootView.findViewById(R.id.negate_container).setVisibility(View.VISIBLE);
+					rootView.findViewById(R.id.replacement_container).setVisibility(View.GONE);
+					break;
+				case REWRITE:
+					rootView.findViewById(R.id.negate_container).setVisibility(View.GONE);
+					rootView.findViewById(R.id.replacement_container).setVisibility(View.VISIBLE);
+					break;
+				}
+			}
+
+			@Override
+			public void onNothingSelected(AdapterView<?> parent) {
+				// NOP
+			}
+		});
+		if (!mRuleEntry.isUserRule()) {
+			action.setEnabled(false);
+		}
 
 		// continue
 		CheckBox cont = (CheckBox)rootView.findViewById(R.id.continue_value);
 		cont.setChecked(mRuleEntry.isContinue());
+		cont.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+			
+			@Override
+			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+				mRuleEntry.setContinue(isChecked);
+			}
+		});
+		if (!mRuleEntry.isUserRule()) {
+			cont.setEnabled(false);
+		}
 
 		// pattern
 		EditText pattern = (EditText)rootView.findViewById(R.id.pattern_value);
 		pattern.setText(mRuleEntry.getPattern());
+		pattern.addTextChangedListener(mPatternChangedListener = new TextWatcher() {
+			
+			@Override
+			public void afterTextChanged(Editable s) {
+				mRuleEntry.setPattern(s.toString());
+			}
+
+			@Override
+			public void onTextChanged(CharSequence s, int start, int before, int count) {
+			}
+			
+			@Override
+			public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+			}
+			
+		});
+		if (!mRuleEntry.isUserRule()) {
+			pattern.setEnabled(false);
+		}
 
 		// negate
 		CheckBox negate = (CheckBox)rootView.findViewById(R.id.negate_value);
 		negate.setChecked(mRuleEntry.isNegate());
+		negate.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+			
+			@Override
+			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+				mRuleEntry.setNegate(isChecked);
+			}
+		});
+		if (!mRuleEntry.isUserRule()) {
+			negate.setEnabled(false);
+		}
+
+		// replacement
+		EditText replacement = (EditText)rootView.findViewById(R.id.replacement_value);
+		replacement.setText(mRuleEntry.getReplacement());
+		replacement.addTextChangedListener(mReplacementChangedListener = new TextWatcher() {
+			
+			@Override
+			public void afterTextChanged(Editable s) {
+				mRuleEntry.setReplacement(s.toString());
+			}
+
+			@Override
+			public void onTextChanged(CharSequence s, int start, int before, int count) {
+			}
+			
+			@Override
+			public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+			}
+			
+		});
+		if (!mRuleEntry.isUserRule()) {
+			replacement.setEnabled(false);
+		}
+
+	}
+	
+	@Override
+	public void onPause() {
+		super.onPause();
+
+		View rootView = getView();
+
+		// delete listener
+
+		// name
+		EditText name = (EditText)rootView.findViewById(R.id.name_value);
+		name.removeTextChangedListener(mNameChangedListener);
+
+		// action
+		Spinner action = (Spinner)rootView.findViewById(R.id.action_value);
+		action.setOnItemSelectedListener(null);
+
+		// continue
+		CheckBox cont = (CheckBox)rootView.findViewById(R.id.continue_value);
+		cont.setOnCheckedChangeListener(null);
+
+		// pattern
+		EditText pattern = (EditText)rootView.findViewById(R.id.pattern_value);
+		pattern.removeTextChangedListener(mPatternChangedListener);
+
+		// negate
+		CheckBox negate = (CheckBox)rootView.findViewById(R.id.negate_value);
+		negate.setOnCheckedChangeListener(null);
+
+		// replacement
+		EditText replacement = (EditText)rootView.findViewById(R.id.replacement_value);
+		replacement.removeTextChangedListener(mReplacementChangedListener);
 	}
 
 	@Override

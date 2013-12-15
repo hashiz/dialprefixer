@@ -14,6 +14,29 @@
         android:paddingRight="@dimen/activity_horizontal_margin"
         android:paddingTop="@dimen/activity_vertical_margin">
 
+<!--    Enable
+ -->
+
+        <LinearLayout
+            android:id="@+id/enable_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <CheckBox
+                android:id="@+id/enable_value"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="" />
+
+            <TextView
+				android:id="@+id/enable_title"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:text="@string/enable_title" />
+
+		</LinearLayout>
+
 <!--    Name
  -->
 
@@ -130,6 +153,31 @@
 				android:text="@string/negate_title" />
 
         </LinearLayout>
+
+<!--    Replacement
+ -->
+
+        <LinearLayout
+            android:id="@+id/replacement_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+				android:id="@+id/replacement_title"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:text="@string/replacement_title" />
+
+            <EditText
+                android:id="@+id/replacement_value"
+                android:hint="@string/replacement_hint"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="" />
+
+		</LinearLayout>
+
     </LinearLayout>
 
 </ScrollView>
