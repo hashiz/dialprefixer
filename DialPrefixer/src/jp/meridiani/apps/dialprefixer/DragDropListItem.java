@@ -7,13 +7,13 @@ import android.view.DragEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
-import android.widget.Checkable;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 
-public class DragDropListItem extends LinearLayout implements Checkable, OnTouchListener {
+public class DragDropListItem extends LinearLayout implements OnTouchListener {
 	
 	private static final String NAMESPACE = "http://schemas.meridiani.jp/apk/res/meridiani";
-	private static final String ATTR_CHECKABLEITEM = "checkableItem";
+	private static final String ATTR_ACTIONICONITEM = "actionIconItem";
 	private static final String ATTR_DRAGHANDLEITEM = "dragHandleItem";
 
 	public interface DragDropListener {
@@ -35,11 +35,9 @@ public class DragDropListItem extends LinearLayout implements Checkable, OnTouch
 
 	}
 
-	private int mAttrCheckableItemId = -1;
+	private int mAttrActionIconItemId = -1;
 	private int mAttrDragHandleItemId = -1;
-	private Checkable mCheckableChild = null;
 	private View mDragHandleChild = null;
-	private boolean mChecked = false;
 	private DragDropListener mDragDropListener = null;
 
 	public DragDropListItem(Context context) {
@@ -48,20 +46,19 @@ public class DragDropListItem extends LinearLayout implements Checkable, OnTouch
 
 	public DragDropListItem(Context context, AttributeSet attrs) {
 		super(context, attrs);
-		mAttrCheckableItemId = attrs.getAttributeResourceValue(NAMESPACE, ATTR_CHECKABLEITEM, -1);
+		mAttrActionIconItemId = attrs.getAttributeResourceValue(NAMESPACE, ATTR_ACTIONICONITEM, -1);
 		mAttrDragHandleItemId = attrs.getAttributeResourceValue(NAMESPACE, ATTR_DRAGHANDLEITEM, -1);
 	}
 
 	public DragDropListItem(Context context, AttributeSet attrs, int defStyle) {
 		super(context, attrs, defStyle);
-		mAttrCheckableItemId = attrs.getAttributeResourceValue(NAMESPACE, ATTR_CHECKABLEITEM, -1);
+		mAttrActionIconItemId = attrs.getAttributeResourceValue(NAMESPACE, ATTR_ACTIONICONITEM, -1);
 		mAttrDragHandleItemId = attrs.getAttributeResourceValue(NAMESPACE, ATTR_DRAGHANDLEITEM, -1);
 	}
 
 	@Override
 	protected void onFinishInflate() {
 		super.onFinishInflate();
-		mCheckableChild = (Checkable)findViewById(mAttrCheckableItemId);
 		mDragHandleChild = findViewById(mAttrDragHandleItemId);
 		if (mDragHandleChild != null) {
 			mDragHandleChild.setOnTouchListener(this);
@@ -70,31 +67,6 @@ public class DragDropListItem extends LinearLayout implements Checkable, OnTouch
 
 	public void setDragDropListener(DragDropListener listener) {
 		mDragDropListener = listener;
-	}
-
-	// Checkable interface
-	@Override
-	public void setChecked(boolean checked) {
-		if (mCheckableChild != null) {
-			mCheckableChild.setChecked(checked);
-		}
-		mChecked = checked;
-	}
-
-	@Override
-	public boolean isChecked() {
-		if (mCheckableChild != null) {
-			return mCheckableChild.isChecked();
-		}
-		return mChecked;
-	}
-
-	@Override
-	public void toggle() {
-		if (mCheckableChild != null) {
-			mCheckableChild.toggle();
-		}
-		mChecked = ! mChecked;
 	}
 
 	// Drag and Drop
@@ -173,6 +145,13 @@ public class DragDropListItem extends LinearLayout implements Checkable, OnTouch
 		}
 	}
 
+	public void setActionIcon(int resId) {
+		View view = findViewById(mAttrActionIconItemId);
+		if (view instanceof ImageView) {
+			((ImageView)view).setImageResource(resId);
+		}
+	}
+
 	// OnTouchListener interface
 	@Override
 	public boolean onTouch(View handleView, MotionEvent motionEvent) {
@@ -189,5 +168,4 @@ public class DragDropListItem extends LinearLayout implements Checkable, OnTouch
 		return true;
 	}
 
-	
 }

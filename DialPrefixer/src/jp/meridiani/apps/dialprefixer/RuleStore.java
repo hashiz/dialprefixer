@@ -160,10 +160,8 @@ public class RuleStore {
 		try {
 			while (listCur.moveToNext()) {
 				UUID uuid = UUID.fromString(listCur.getString(listCur.getColumnIndex(COL_UUID)));
-				int order = listCur.getInt(listCur.getColumnIndex(COL_RULEORDER));
 				RuleEntry ruleEntry = new RuleEntry(uuid);
-				ruleEntry.setOrder(order);
-				loadRuleEntryInternal(ruleEntry);
+				setRuleEntry(ruleEntry, listCur);
 				list.add(ruleEntry);
 			}
 		}
@@ -195,26 +193,26 @@ public class RuleStore {
 		}
 	}
 
-	private RuleEntry loadRuleEntryInternal(RuleEntry ruleEntry) {
-		String uuid = ruleEntry.getUuid().toString();
-		Cursor dataCur = mDB.query(RULE_TABLE_NAME, null, COL_UUID + "=?", new String[]{uuid}, null, null, null);
-		try {
-			if (dataCur.moveToFirst()) {
-				for (String col : dataCur.getColumnNames()) {
-					String value = dataCur.getString(dataCur.getColumnIndex(col));
-					ruleEntry.setValue(col, value);
-				}
-			}
-		}
-		finally {
-			dataCur.close();
+	private RuleEntry setRuleEntry(RuleEntry ruleEntry, Cursor cursor) {
+		for (String col : cursor.getColumnNames()) {
+			String value = cursor.getString(cursor.getColumnIndex(col));
+			ruleEntry.setValue(col, value);
 		}
 		return ruleEntry;
 	}
 
 	public RuleEntry loadRuleEntry(UUID uuid) {
 		RuleEntry ruleEntry = new RuleEntry(uuid);
-		return loadRuleEntryInternal(ruleEntry);
+		Cursor dataCur = mDB.query(RULE_TABLE_NAME, null, COL_UUID + "=?", new String[]{uuid.toString()}, null, null, null);
+		try {
+			if (dataCur.moveToFirst()) {
+				setRuleEntry(ruleEntry, dataCur);
+			}
+		}
+		finally {
+			dataCur.close();
+		}
+		return ruleEntry;
 	}
 
 	public void storeRuleEntry(RuleEntry ruleEntry) {

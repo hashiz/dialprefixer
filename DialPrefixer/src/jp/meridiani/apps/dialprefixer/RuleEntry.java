@@ -303,6 +303,7 @@ public class RuleEntry implements Parcelable {
     	out.writeInt(mContinue ? 1 : 0);
     	out.writeString(mPattern);
     	out.writeInt(mNegate ? 1 : 0);
+    	out.writeString(mReplacement);
 	}
 
 	public RuleEntry(Parcel in) {
@@ -315,6 +316,7 @@ public class RuleEntry implements Parcelable {
     	mContinue            = in.readInt() != 0;
     	mPattern             = in.readString();
     	mNegate              = in.readInt() != 0;
+    	mReplacement         = in.readString();
 	}
 
     public static final Parcelable.Creator<RuleEntry> CREATOR = new Parcelable.Creator<RuleEntry>() {

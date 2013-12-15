@@ -25,12 +25,12 @@ public class RuleListAdapter extends BaseAdapter implements DragDropListAdapter 
 		this(context, resource, textViewId, new ArrayList<RuleEntry>());
 	}
 
-	public RuleListAdapter(Context context, int resource, int textViewId, ArrayList<RuleEntry> profileList) {
+	public RuleListAdapter(Context context, int resource, int textViewId, ArrayList<RuleEntry> ruleList) {
 		super();
 		mResource = resource;
 		mTextViewId = textViewId;
 
-		mList = profileList;
+		mList = ruleList;
 		mInflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 	}
 
@@ -49,6 +49,18 @@ public class RuleListAdapter extends BaseAdapter implements DragDropListAdapter 
 		}
 		if (itemView instanceof DragDropListItem && parent instanceof DragDropListener) {
 			((DragDropListItem)itemView).setDragDropListener((DragDropListener)parent);
+			int icon = -1;
+			switch (getItem(position).getAction()) {
+			case CHECK:
+				icon = android.R.drawable.ic_menu_view;
+				break;
+			case REWRITE:
+				icon = android.R.drawable.ic_menu_edit;
+				break;
+			}
+			if (icon > 0) {
+				((DragDropListItem)itemView).setActionIcon(icon);
+			}
 		}
 		return itemView;
 	};

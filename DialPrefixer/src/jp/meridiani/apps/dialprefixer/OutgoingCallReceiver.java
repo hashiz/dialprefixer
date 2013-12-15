@@ -33,10 +33,10 @@ public class OutgoingCallReceiver extends BroadcastReceiver {
 		String newNumber = origNumber;
 		ruleEvalute : for ( RuleEntry ruleEntry : store.listRules(true) ) {
 			String pattern = ruleEntry.getPatternEvaluted(prefs);
-			Log.d(TAG, "pattern=" + pattern);
 			switch (ruleEntry.getAction()) {
 			case CHECK:
 				if (newNumber.matches(pattern) ^ ruleEntry.isNegate()) {
+					Log.d(TAG, "hit pattern=" + pattern);
 					if (!ruleEntry.isContinue()) {
 						break ruleEvalute;
 					}
@@ -44,6 +44,7 @@ public class OutgoingCallReceiver extends BroadcastReceiver {
 				break;
 			case REWRITE:
 				if (newNumber.matches(pattern)) {
+					Log.d(TAG, "hit pattern=" + pattern);
 					newNumber = newNumber.replaceFirst(pattern, ruleEntry.getReplacementEvaluted(prefs));
 					if (!ruleEntry.isContinue()) {
 						break ruleEvalute;
