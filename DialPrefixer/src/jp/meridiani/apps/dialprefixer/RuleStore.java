@@ -82,7 +82,7 @@ public class RuleStore {
 							COL_REPLACEMENT		// 11
 						));
 
-			loadDefaultRule(db);
+			loadDefaultRules(db);
 		}
 
 		@Override
@@ -109,7 +109,7 @@ public class RuleStore {
 			return buf.toString();
 		}
 		
-		private void loadDefaultRule(SQLiteDatabase db) {
+		private void loadDefaultRules(SQLiteDatabase db) {
 			try {
 				InputStream input = mContext.getResources().getAssets().open(DEFAULT_RULE_FILE);
 				BufferedReader rdr = new BufferedReader(new InputStreamReader(input));
@@ -123,7 +123,7 @@ public class RuleStore {
 						" ( " + join(",", colnames) +" ) " +
 						"VALUES ( " + getChars(",", "?", colnames.length)+ " );");
 				while ((line = rdr.readLine())!= null) {
-					stm.bindAllArgsAsStrings(line.split("\t"));
+					stm.bindAllArgsAsStrings(line.split("\t",-1));
 					stm.executeInsert();
 					stm.clearBindings();
 				}
