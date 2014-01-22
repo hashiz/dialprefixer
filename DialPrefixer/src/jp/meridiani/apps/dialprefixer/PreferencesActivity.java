@@ -13,7 +13,9 @@ import android.view.ViewGroup;
 public class PreferencesActivity extends FragmentActivity {
 
     private static final String[] EDIT_TEXT_PREFERENCES = {
-        Prefs.KEY_PREFIX,
+        Prefs.KEY_PREFIX_A,
+        Prefs.KEY_PREFIX_B,
+        Prefs.KEY_PREFIX_C,
         Prefs.KEY_CALLERID_DENY,
         Prefs.KEY_CALLERID_PERMIT,
     };

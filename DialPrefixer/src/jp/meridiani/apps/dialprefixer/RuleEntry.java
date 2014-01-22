@@ -3,9 +3,12 @@ package jp.meridiani.apps.dialprefixer;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
+import java.util.Map;
 import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import jp.meridiani.apps.dialprefixer.Prefs.Prefix;
 
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -228,17 +231,23 @@ public class RuleEntry implements Parcelable {
 
 	private String evalute(Prefs prefs, String origPattern) {
 		StringBuffer buf = new StringBuffer();
-		String prefix = prefs.getPrefix();
+		Map<Prefix, String> prefixes = prefs.getPrefixes();
 		String deny   = prefs.getCallerIdDeny();
 		String permit = prefs.getCallerIdPermit();
 
-		Pattern p = Pattern.compile("(%p|%d|%r)");
+		Pattern p = Pattern.compile("(%pA|%pB|%pC|%d|%r)");
 		Matcher m = p.matcher(origPattern);
 		while (m.find()) {
 			String match = m.group();
 			String replacement = null;
-			if (match.equals("%p")) {
-				replacement = prefix;
+			if (match.equals("%pA")) {
+				replacement = prefixes.get(Prefs.Prefix.A);
+			}
+			else if (match.equals("%pB")) {
+				replacement = prefixes.get(Prefs.Prefix.B);
+			}
+			else if (match.equals("%pC")) {
+				replacement = prefixes.get(Prefs.Prefix.C);
 			}
 			else if (match.equals("%d")) {
 				replacement = deny;

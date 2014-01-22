@@ -3,6 +3,7 @@ package jp.meridiani.apps.dialprefixer;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import android.app.backup.BackupManager;
@@ -19,7 +20,9 @@ public class Prefs implements OnSharedPreferenceChangeListener {
 	private static final String PREFS_END   = "</preferences>";
 
 	static final String KEY_ENABLE_ADD_PREFIX    = "enable_add_prefix";
-	static final String KEY_PREFIX               = "prefix";
+	static final String KEY_PREFIX_A             = "prefix_a";
+	static final String KEY_PREFIX_B             = "prefix_b";
+	static final String KEY_PREFIX_C             = "prefix_c";
 	static final String KEY_CALLERID_DENY        = "callerid_deny";
 	static final String KEY_CALLERID_PERMIT      = "callerid_permit";
 	static final String KEY_CALLLOG_DELETEPREFIX = "calllog_deleteprefix";
@@ -28,6 +31,12 @@ public class Prefs implements OnSharedPreferenceChangeListener {
 
 	private Context mContext;
 	private SharedPreferences mSharedPrefs;
+
+	public static enum Prefix {
+		A,
+		B,
+		C
+	}
 
 	public int getPrefsResId() {
 		return R.xml.prefs;
@@ -68,8 +77,33 @@ public class Prefs implements OnSharedPreferenceChangeListener {
 		return mSharedPrefs.getBoolean(KEY_ENABLE_ADD_PREFIX, false);
 	}
 
-	public String getPrefix() {
-		return mSharedPrefs.getString(KEY_PREFIX, "");
+	private String getPrefixKey(Prefix p) {
+		String key = null;
+		switch (p) {
+		case A:
+			key = KEY_PREFIX_A;
+			break;
+		case B:
+			key = KEY_PREFIX_B;
+			break;
+		case C:
+			key = KEY_PREFIX_C;
+			break;
+		}
+		return key;
+	}
+
+	public String getPrefix(Prefix p) {
+		String key = getPrefixKey(p);
+		return mSharedPrefs.getString(key, "");
+	}
+
+	public Map<Prefix, String> getPrefixes() {
+		LinkedHashMap<Prefix, String> map = new LinkedHashMap<Prefs.Prefix, String>();
+		for ( Prefix p : Prefix.values() ) {
+			map.put(p, getPrefix(p));
+		}
+		return map;
 	}
 
 	public String getCallerIdDeny() {

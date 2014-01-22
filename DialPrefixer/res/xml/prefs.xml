@@ -17,17 +17,39 @@
             />
         
         <EditTextPreference
-	        android:id="@+id/prefs_prefix_textbox"
-	        android:key="prefix"
-	        android:title="@string/prefs_prefix"
-	        android:dialogTitle="@string/prefs_prefix_dialog"
-	        android:hint="@string/prefs_prefix_hint"
+	        android:id="@+id/prefs_prefixA_textbox"
+	        android:key="prefix_a"
+	        android:title="@string/prefs_prefixA"
+	        android:dialogTitle="@string/prefs_prefixA_dialog"
+	        android:hint="@string/prefs_prefixA_hint"
 	        android:inputType="phone"
-	        android:defaultValue="@string/default_prefix"
+	        android:defaultValue="@string/default_prefixA"
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content" />
 	
-	    <EditTextPreference
+        <EditTextPreference
+	        android:id="@+id/prefs_prefixB_textbox"
+	        android:key="prefix_b"
+	        android:title="@string/prefs_prefixB"
+	        android:dialogTitle="@string/prefs_prefixB_dialog"
+	        android:hint="@string/prefs_prefixB_hint"
+	        android:inputType="phone"
+	        android:defaultValue="@string/default_prefixB"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content" />
+	
+        <EditTextPreference
+	        android:id="@+id/prefs_prefixC_textbox"
+	        android:key="prefix_c"
+	        android:title="@string/prefs_prefixC"
+	        android:dialogTitle="@string/prefs_prefixC_dialog"
+	        android:hint="@string/prefs_prefixC_hint"
+	        android:inputType="phone"
+	        android:defaultValue="@string/default_prefixC"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content" />
+	
+        <EditTextPreference
 	        android:id="@+id/prefs_callerid_deny_textbox"
 	        android:key="callerid_deny"
 	        android:title="@string/prefs_callerid_deny"

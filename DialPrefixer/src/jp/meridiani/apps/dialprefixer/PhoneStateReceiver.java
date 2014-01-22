@@ -1,5 +1,8 @@
 package jp.meridiani.apps.dialprefixer;
 
+import java.util.Map;
+
+import jp.meridiani.apps.dialprefixer.Prefs.Prefix;
 import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
 import android.content.ContentValues;
@@ -50,9 +53,9 @@ public class PhoneStateReceiver extends BroadcastReceiver {
 	}
 
 	private final static int _ID    = 0;
-	private final static int TYPE   = 1;
+	//private final static int TYPE   = 1;
 	private final static int NUMBER = 2;
-	private final static int DATE   = 3;
+	//private final static int DATE   = 3;
 	private final static String[] COLS = {
 			CallLog.Calls._ID,
 			CallLog.Calls.TYPE,
@@ -92,9 +95,24 @@ public class PhoneStateReceiver extends BroadcastReceiver {
 		}
 		Log.d(TAG, "query: id=" + id + ", number=" + number);
 
-		String regex = String.format("^(%1$s|%2$s|)(%3$s)", prefs.getCallerIdDeny(), prefs.getCallerIdPermit(), prefs.getPrefix());
+		// permit/deny caller id
+		StringBuffer regex = new StringBuffer(String.format("^(%1$s|%2$s|)", prefs.getCallerIdDeny(), prefs.getCallerIdPermit()));
+
+		// dial prefix
+		regex.append('(');
+		String pipe = "";
+		Map<Prefix, String> prefixes = prefs.getPrefixes();
+		for (String prefix : prefixes.values()) {
+			prefix = prefix.trim();
+			if (!prefix.isEmpty()) {
+				regex.append(pipe);
+				regex.append(prefix);
+				pipe = "|";
+			}
+		}
+		regex.append(')');
 		
-		String rewrite = number.replaceFirst(regex, "$1");
+		String rewrite = number.replaceFirst(regex.toString(), "$1");
 		if (!rewrite.equals(number)) {
 			Log.d(TAG, "rewrite:" + number +" to " + rewrite);
 			ContentValues values = new ContentValues();

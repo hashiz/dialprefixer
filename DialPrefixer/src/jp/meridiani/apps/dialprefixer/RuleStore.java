@@ -28,7 +28,7 @@ public class RuleStore {
 	private static final String DEFAULT_RULE_FILE = "default_rule.tsv";
 
 	private static final String DATABASE_NAME = "rulelist.db";
-	private static final int    DATABASE_VERSION = 1;
+	private static final int    DATABASE_VERSION = 2;
 
 	private static final String MISC_TABLE_NAME = "misc";
 	private static final String COL_KEY         = "key";
@@ -82,56 +82,60 @@ public class RuleStore {
 							COL_REPLACEMENT		// 11
 						));
 
-			loadDefaultRules(db);
+			loadDefaultRules(mContext, db);
 		}
 
 		@Override
 		public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+			if (oldVersion == 1) {
+				
+			}
 		}
 
-		private String join(String s, String[] a) {
-			StringBuilder buf = new StringBuilder();
-			String sep = "";
-			for (String p : a) {
-				buf.append(sep).append(p);
-				sep = s;
-			}
-			return buf.toString();
-		}
+	}
 
-		private String getChars(String s, String c, int count) {
-			StringBuilder buf = new StringBuilder();
-			String sep = "";
-			for (int i = 0; i < count; i++ ) {
-				buf.append(sep).append(c);
-				sep = s;
-			}
-			return buf.toString();
+	private static String join(String s, String[] a) {
+		StringBuilder buf = new StringBuilder();
+		String sep = "";
+		for (String p : a) {
+			buf.append(sep).append(p);
+			sep = s;
 		}
-		
-		private void loadDefaultRules(SQLiteDatabase db) {
-			try {
-				InputStream input = mContext.getResources().getAssets().open(DEFAULT_RULE_FILE);
-				BufferedReader rdr = new BufferedReader(new InputStreamReader(input));
-				String line;
-				line = rdr.readLine();
-				if (line == null) {
-					return;
-				}
-				String[] colnames = line.split("\t");
-				SQLiteStatement stm = db.compileStatement("INSERT INTO " + RULE_TABLE_NAME + 
-						" ( " + join(",", colnames) +" ) " +
-						"VALUES ( " + getChars(",", "?", colnames.length)+ " );");
-				while ((line = rdr.readLine())!= null) {
-					stm.bindAllArgsAsStrings(line.split("\t",-1));
-					stm.executeInsert();
-					stm.clearBindings();
-				}
-				stm.close();
+		return buf.toString();
+	}
+
+	private static String getChars(String s, String c, int count) {
+		StringBuilder buf = new StringBuilder();
+		String sep = "";
+		for (int i = 0; i < count; i++ ) {
+			buf.append(sep).append(c);
+			sep = s;
+		}
+		return buf.toString();
+	}
+	
+	private static void loadDefaultRules(Context context, SQLiteDatabase db) {
+		try {
+			InputStream input = context.getResources().getAssets().open(DEFAULT_RULE_FILE);
+			BufferedReader rdr = new BufferedReader(new InputStreamReader(input));
+			String line;
+			line = rdr.readLine();
+			if (line == null) {
+				return;
 			}
-			catch (IOException e) {
-				e.printStackTrace();
+			String[] colnames = line.split("\t");
+			SQLiteStatement stm = db.compileStatement("INSERT INTO " + RULE_TABLE_NAME + 
+					" ( " + join(",", colnames) +" ) " +
+					"VALUES ( " + getChars(",", "?", colnames.length)+ " );");
+			while ((line = rdr.readLine())!= null) {
+				stm.bindAllArgsAsStrings(line.split("\t",-1));
+				stm.executeInsert();
+				stm.clearBindings();
 			}
+			stm.close();
+		}
+		catch (IOException e) {
+			e.printStackTrace();
 		}
 	}
 
@@ -145,6 +149,39 @@ public class RuleStore {
 			mInstance = new RuleStore(context);
 		}
 		return mInstance;
+	}
+
+	public void reloadDefaultRules() {
+		mDB.beginTransaction();
+
+		try {
+			// delete existing rules
+			mDB.delete(RULE_TABLE_NAME, COL_USERRULE + "=", new String[] { "FALSE" });
+
+			// load default rules
+			loadDefaultRules(mContext, mDB);
+
+			// renumber rule order
+			int maxOrder = 0;
+			Cursor cursor = mDB.query(RULE_TABLE_NAME, new String [] {"MAX("+COL_RULEORDER+")"}, COL_USERRULE + "=?", new String[] {"FALSE"}, null, null, null);
+			if (cursor.moveToFirst()) {
+				maxOrder = cursor.getInt(0);
+			}
+			cursor.close();
+			cursor = mDB.query(RULE_TABLE_NAME, new String[]{COL_UUID}, COL_USERRULE + "=?", new String[]{"TRUE"}, null, null, COL_RULEORDER+" ASC");
+			ContentValues values = new ContentValues();
+			while (cursor.moveToNext()) {
+				values.clear();
+				String uuid = cursor.getString(0);
+				values.put(COL_RULEORDER, ++maxOrder);
+				mDB.update(RULE_TABLE_NAME, values, COL_UUID+"=?", new String[]{uuid});
+			}
+			cursor.close();
+			mDB.setTransactionSuccessful();
+		}
+		finally {
+			mDB.endTransaction();
+		}
 	}
 
 	public ArrayList<RuleEntry> listRules(boolean enableOnly) {
