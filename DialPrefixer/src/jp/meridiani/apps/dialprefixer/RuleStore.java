@@ -156,14 +156,14 @@ public class RuleStore {
 
 		try {
 			// delete existing rules
-			mDB.delete(RULE_TABLE_NAME, COL_USERRULE + "=", new String[] { "FALSE" });
+			mDB.delete(RULE_TABLE_NAME, COL_USERRULE + "=?", new String[] { Boolean.toString(false) });
 
 			// load default rules
 			loadDefaultRules(mContext, mDB);
 
 			// renumber rule order
 			int maxOrder = 0;
-			Cursor cursor = mDB.query(RULE_TABLE_NAME, new String [] {"MAX("+COL_RULEORDER+")"}, COL_USERRULE + "=?", new String[] {"FALSE"}, null, null, null);
+			Cursor cursor = mDB.query(RULE_TABLE_NAME, new String [] {"MAX("+COL_RULEORDER+")"}, COL_USERRULE + "=?", new String[] {Boolean.toString(false)}, null, null, null);
 			if (cursor.moveToFirst()) {
 				maxOrder = cursor.getInt(0);
 			}
