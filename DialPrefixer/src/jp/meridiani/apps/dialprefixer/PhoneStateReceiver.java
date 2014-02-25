@@ -96,7 +96,7 @@ public class PhoneStateReceiver extends BroadcastReceiver {
 		Log.d(TAG, "query: id=" + id + ", number=" + number);
 
 		// permit/deny caller id
-		StringBuffer regex = new StringBuffer(String.format("^(%1$s|%2$s|)", prefs.getCallerIdDeny(), prefs.getCallerIdPermit()));
+		StringBuffer regex = new StringBuffer(String.format("^(%1$s|%2$s|)", prefs.getPrefixNoSendCallerId(), prefs.getPrefixSendCallerId()));
 
 		// dial prefix
 		regex.append('(');

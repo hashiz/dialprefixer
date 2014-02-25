@@ -232,8 +232,8 @@ public class RuleEntry implements Parcelable {
 	private String evalute(Prefs prefs, String origPattern) {
 		StringBuffer buf = new StringBuffer();
 		Map<Prefix, String> prefixes = prefs.getPrefixes();
-		String deny   = prefs.getCallerIdDeny();
-		String permit = prefs.getCallerIdPermit();
+		String prefixNoSend = prefs.getPrefixNoSendCallerId();
+		String prefixSend   = prefs.getPrefixSendCallerId();
 
 		Pattern p = Pattern.compile("(%pA|%pB|%pC|%d|%r)");
 		Matcher m = p.matcher(origPattern);
@@ -250,10 +250,10 @@ public class RuleEntry implements Parcelable {
 				replacement = prefixes.get(Prefs.Prefix.C);
 			}
 			else if (match.equals("%d")) {
-				replacement = deny;
+				replacement = prefixNoSend;
 			}
 			else if (match.equals("%r")) {
-				replacement = permit;
+				replacement = prefixSend;
 			}
 			m.appendReplacement(buf, replacement);
 		}

@@ -50,25 +50,25 @@
 	        android:layout_height="wrap_content" />
 	
         <EditTextPreference
-	        android:id="@+id/prefs_callerid_deny_textbox"
-	        android:key="callerid_deny"
-	        android:title="@string/prefs_callerid_deny"
-	        android:dialogTitle="@string/prefs_callerid_deny_dialog"
-	        android:hint="@string/prefs_callerid_deny_hint"
+	        android:id="@+id/prefs_nosend_callerid_textbox"
+	        android:key="nosend_callerid"
+	        android:title="@string/prefs_nosend_callerid"
+	        android:dialogTitle="@string/prefs_nosend_callerid_dialog"
+	        android:hint="@string/prefs_nosend_callerid_hint"
 	        android:inputType="phone"
-	        android:defaultValue="@string/default_callerid_deny"
+	        android:defaultValue="@string/default_nosend_callerid"
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
 	        />
 
 	    <EditTextPreference
-	        android:id="@+id/prefs_callerid_permit_textbox"
-	        android:key="callerid_permit"
-	        android:title="@string/prefs_callerid_permit"
-	        android:dialogTitle="@string/prefs_callerid_permit_dialog"
-	        android:hint="@string/prefs_callerid_permit_hint"
+	        android:id="@+id/prefs_send_callerid_textbox"
+	        android:key="send_callerid"
+	        android:title="@string/prefs_send_callerid"
+	        android:dialogTitle="@string/prefs_send_callerid_dialog"
+	        android:hint="@string/prefs_send_callerid_hint"
 	        android:inputType="phone"
-	        android:defaultValue="@string/default_callerid_permit"
+	        android:defaultValue="@string/default_send_callerid"
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
 	        />

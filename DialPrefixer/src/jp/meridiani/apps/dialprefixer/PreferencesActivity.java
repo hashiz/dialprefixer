@@ -16,8 +16,8 @@ public class PreferencesActivity extends FragmentActivity {
         Prefs.KEY_PREFIX_A,
         Prefs.KEY_PREFIX_B,
         Prefs.KEY_PREFIX_C,
-        Prefs.KEY_CALLERID_DENY,
-        Prefs.KEY_CALLERID_PERMIT,
+        Prefs.KEY_NOSEND_CALLERID,
+        Prefs.KEY_SEND_CALLERID,
     };
 
     @Override

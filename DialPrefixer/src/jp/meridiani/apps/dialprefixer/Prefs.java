@@ -23,8 +23,8 @@ public class Prefs implements OnSharedPreferenceChangeListener {
 	static final String KEY_PREFIX_A             = "prefix_a";
 	static final String KEY_PREFIX_B             = "prefix_b";
 	static final String KEY_PREFIX_C             = "prefix_c";
-	static final String KEY_CALLERID_DENY        = "callerid_deny";
-	static final String KEY_CALLERID_PERMIT      = "callerid_permit";
+	static final String KEY_SEND_CALLERID        = "send_callerid";
+	static final String KEY_NOSEND_CALLERID      = "nosend_callerid";
 	static final String KEY_CALLLOG_DELETEPREFIX = "calllog_deleteprefix";
 	static final String KEY_CONFIRMNUMBER        = "confirmnumber";
     static final String KEY_DISPLAYNUMBER        = "displaynumber";
@@ -106,12 +106,12 @@ public class Prefs implements OnSharedPreferenceChangeListener {
 		return map;
 	}
 
-	public String getCallerIdDeny() {
-		return mSharedPrefs.getString(KEY_CALLERID_DENY, "");
+	public String getPrefixNoSendCallerId() {
+		return mSharedPrefs.getString(KEY_NOSEND_CALLERID, "");
 	}
 
-	public String getCallerIdPermit() {
-		return mSharedPrefs.getString(KEY_CALLERID_PERMIT, "");
+	public String getPrefixSendCallerId() {
+		return mSharedPrefs.getString(KEY_SEND_CALLERID, "");
 	}
 
 	public boolean isCallLogDeletePrefix() {
