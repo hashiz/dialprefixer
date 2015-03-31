@@ -52,6 +52,9 @@ public class DialPrefixerActivity extends FragmentActivity {
 			i.putExtra(RuleEditActivity.EXTRA_RULE_ENTRY, new RuleEntry());
 			startActivity(i);
 			return true;
+		case R.id.action_rewrite_calllog:
+			CallLogManager.rewriteCallLog(getApplicationContext());
+			return true;
 		case R.id.action_reload_defaults:
 			RuleStore.getInstance(this).reloadDefaultRules();
 			((RuleListFragment)(getSupportFragmentManager().findFragmentByTag(TAG_RULE_LIST))).updateList();

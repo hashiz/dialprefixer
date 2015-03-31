@@ -12,9 +12,17 @@
     <item
         android:id="@+id/action_reload_defaults"
         android:orderInCategory="100"
-        android:showAsAction="ifRoom"
+        android:showAsAction="never"
         android:title="@string/action_reload_defaults"
         android:icon="@android:drawable/ic_menu_rotate"
+        />
+
+    <item
+        android:id="@+id/action_rewrite_calllog"
+        android:orderInCategory="100"
+        android:showAsAction="never"
+        android:title="@string/action_rewrite_calllog"
+        android:icon="@android:drawable/ic_menu_agenda"
         />
 
     <item

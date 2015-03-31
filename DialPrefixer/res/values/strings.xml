@@ -4,7 +4,8 @@
     <!-- main -->
     <string name="app_name">Dial Prefixer</string>
     <string name="action_add_rule">Add Rule</string>
-    <string name="action_reload_defaults">Reload Defaults</string>
+    <string name="action_reload_defaults">Reload Default Rules</string>
+    <string name="action_rewrite_calllog">Rewrite CallLog</string>
     <string name="action_settings">Settings</string>
     <string name="action_about">About</string>
 

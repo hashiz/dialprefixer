@@ -1,15 +1,10 @@
 package jp.meridiani.apps.dialprefixer;
 
-import java.util.Map;
-
-import jp.meridiani.apps.dialprefixer.Prefs.Prefix;
 import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.database.ContentObserver;
-import android.database.Cursor;
 import android.os.Handler;
 import android.provider.CallLog;
 import android.telephony.TelephonyManager;
@@ -23,7 +18,7 @@ public class PhoneStateReceiver extends BroadcastReceiver {
 
 	@Override
 	public void onReceive(final Context context, Intent intent) {
-		Log.d(TAG, "onReceive:" + intent.getAction());
+		Log.d(TAG, "onReceive: Action:" + intent.getAction());
 		if (!intent.getAction().equals(TelephonyManager.ACTION_PHONE_STATE_CHANGED)) {
 			return;
 		}
@@ -34,6 +29,7 @@ public class PhoneStateReceiver extends BroadcastReceiver {
 		if (state == null) {
 			return;
 		}
+		Log.d(TAG, "onReceive: State: " + state);
 		if (state.equals(TelephonyManager.EXTRA_STATE_IDLE)) {
 			Prefs prefs = Prefs.getInstance(context);
 			if (!prefs.isCallLogDeletePrefix()) {
@@ -45,86 +41,11 @@ public class PhoneStateReceiver extends BroadcastReceiver {
 				public void onChange(boolean selfChange) {
 					super.onChange(selfChange);
 					resolver.unregisterContentObserver(this);
-					rewriteLastCallLog(context);
+					CallLogManager.rewriteLastCallLog(context);
 				}
 			});
 			return;
 		}
 	}
 
-	private final static int _ID    = 0;
-	//private final static int TYPE   = 1;
-	private final static int NUMBER = 2;
-	//private final static int DATE   = 3;
-	private final static String[] COLS = {
-			CallLog.Calls._ID,
-			CallLog.Calls.TYPE,
-			CallLog.Calls.NUMBER,
-			CallLog.Calls.DATE,
-	};
-	private final static String TYPEIS = CallLog.Calls.TYPE + "=?";
-	private final static String [] OUTGOINGTYPE = {
-		Integer.toString(CallLog.Calls.OUTGOING_TYPE),
-	};
-	private final static String _IDIS = CallLog.Calls._ID + "=?";
-	private static void rewriteLastCallLog(Context context) {
-		ContentResolver resolver = context.getContentResolver();
-		Prefs prefs = Prefs.getInstance(context);
-		Cursor log = null;
-		String id = null;
-		String number = null;
-		try {
-			log = resolver.query(CallLog.Calls.CONTENT_URI,
-								COLS,
-								TYPEIS,
-								OUTGOINGTYPE,
-								CallLog.Calls.DEFAULT_SORT_ORDER);
-			if (!log.moveToFirst()) {
-				return;
-			}
-			id = log.getString(_ID);
-			number = log.getString(NUMBER);
-		}
-		finally {
-			if (log != null) {
-				log.close();
-			}
-		}
-		if (id == null || number == null) {
-			return;
-		}
-		Log.d(TAG, "query: id=" + id + ", number=" + number);
-
-		// permit/deny caller id
-		StringBuffer regex = new StringBuffer(String.format("^(%1$s|%2$s|)", prefs.getPrefixNoSendCallerId(), prefs.getPrefixSendCallerId()));
-
-		// dial prefix
-		regex.append('(');
-		String pipe = "";
-		Map<Prefix, String> prefixes = prefs.getPrefixes();
-		for (String prefix : prefixes.values()) {
-			prefix = prefix.trim();
-			if (!prefix.isEmpty()) {
-				regex.append(pipe);
-				regex.append(prefix);
-				pipe = "|";
-			}
-		}
-		regex.append(')');
-		
-		String rewrite = number.replaceFirst(regex.toString(), "$1");
-		if (!rewrite.equals(number)) {
-			Log.d(TAG, "rewrite:" + number +" to " + rewrite);
-			ContentValues values = new ContentValues();
-			values.put(CallLog.Calls.NUMBER, rewrite);
-			int rows = resolver.update(CallLog.Calls.CONTENT_URI,
-										values,
-										_IDIS,
-										new String[] {id});
-			if (rows < 1) {
-				return;
-			}
-			Log.d(TAG, "rewrite:" + rows);
-		}
-	}
 }
