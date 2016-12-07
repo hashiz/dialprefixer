@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <PreferenceCategory
+        android:title="@string/pref_category_dial_prefix"
+        >
+
+        <CheckBoxPreference
+            android:id="@+id/prefs_enable_add_prefix_checkbox"
+            android:key="enable_add_prefix"
+            android:title="@string/prefs_enable_add_prefix"
+		    android:defaultValue="false"
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+            />
+        
+        <EditTextPreference
+	        android:id="@+id/prefs_prefixA_textbox"
+	        android:key="prefix_a"
+	        android:title="@string/prefs_prefixA"
+	        android:dialogTitle="@string/prefs_prefixA_dialog"
+	        android:hint="@string/prefs_prefixA_hint"
+	        android:inputType="phone"
+	        android:defaultValue="@string/default_prefixA"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content" />
+	
+        <EditTextPreference
+	        android:id="@+id/prefs_prefixB_textbox"
+	        android:key="prefix_b"
+	        android:title="@string/prefs_prefixB"
+	        android:dialogTitle="@string/prefs_prefixB_dialog"
+	        android:hint="@string/prefs_prefixB_hint"
+	        android:inputType="phone"
+	        android:defaultValue="@string/default_prefixB"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content" />
+	
+        <EditTextPreference
+	        android:id="@+id/prefs_prefixC_textbox"
+	        android:key="prefix_c"
+	        android:title="@string/prefs_prefixC"
+	        android:dialogTitle="@string/prefs_prefixC_dialog"
+	        android:hint="@string/prefs_prefixC_hint"
+	        android:inputType="phone"
+	        android:defaultValue="@string/default_prefixC"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content" />
+	
+        <EditTextPreference
+	        android:id="@+id/prefs_nosend_callerid_textbox"
+	        android:key="nosend_callerid"
+	        android:title="@string/prefs_nosend_callerid"
+	        android:dialogTitle="@string/prefs_nosend_callerid_dialog"
+	        android:hint="@string/prefs_nosend_callerid_hint"
+	        android:inputType="phone"
+	        android:defaultValue="@string/default_nosend_callerid"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        />
+
+	    <EditTextPreference
+	        android:id="@+id/prefs_send_callerid_textbox"
+	        android:key="send_callerid"
+	        android:title="@string/prefs_send_callerid"
+	        android:dialogTitle="@string/prefs_send_callerid_dialog"
+	        android:hint="@string/prefs_send_callerid_hint"
+	        android:inputType="phone"
+	        android:defaultValue="@string/default_send_callerid"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        />
+	</PreferenceCategory>
+
+    <PreferenceCategory
+        android:title="@string/pref_category_calllog"
+        >
+
+    	<CheckBoxPreference
+		    android:id="@+id/prefs_calllog_deleteprefix_checkbox"
+		    android:key="calllog_deleteprefix"
+		    android:title="@string/prefs_calllog_deleteprefix"
+		    android:defaultValue="false"
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    />
+
+	</PreferenceCategory>
+
+    <PreferenceCategory
+        android:title="@string/pref_category_ui"
+        >
+
+    	<CheckBoxPreference
+			android:id="@+id/prefs_ui_confirmnumber_checkbox"
+			android:key="confirmnumber"
+			android:title="@string/prefs_ui_confirmnumber"
+			android:defaultValue="true"
+			android:layout_width="wrap_content"
+	       	android:layout_height="wrap_content"
+	        />
+
+    	<CheckBoxPreference
+			android:id="@+id/prefs_ui_displaynumber_checkbox"
+			android:key="displaynumber"
+			android:title="@string/prefs_ui_displaynumber"
+			android:defaultValue="true"
+	       	android:layout_width="wrap_content"
+	       	android:layout_height="wrap_content"
+	        />
+
+	</PreferenceCategory>
+
+</PreferenceScreen>

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <item
+        android:id="@+id/action_add_rule"
+        android:orderInCategory="100"
+        android:showAsAction="ifRoom"
+        android:title="@string/action_add_rule"
+        android:icon="@android:drawable/ic_menu_add"
+        />
+
+    <item
+        android:id="@+id/action_reload_defaults"
+        android:orderInCategory="100"
+        android:showAsAction="never"
+        android:title="@string/action_reload_defaults"
+        android:icon="@android:drawable/ic_menu_rotate"
+        />
+
+    <item
+        android:id="@+id/action_rewrite_calllog"
+        android:orderInCategory="100"
+        android:showAsAction="never"
+        android:title="@string/action_rewrite_calllog"
+        android:icon="@android:drawable/ic_menu_agenda"
+        />
+
+    <item
+        android:id="@+id/action_settings"
+        android:orderInCategory="100"
+        android:showAsAction="never"
+        android:title="@string/action_settings"
+        android:icon="@android:drawable/ic_menu_preferences"
+        />
+
+    <item
+        android:id="@+id/action_about"
+        android:orderInCategory="100"
+        android:showAsAction="never"
+        android:title="@string/action_about"
+        android:icon="@android:drawable/ic_menu_help"
+        />
+
+</menu>
