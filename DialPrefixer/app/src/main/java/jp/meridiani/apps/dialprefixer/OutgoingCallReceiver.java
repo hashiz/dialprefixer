@@ -19,7 +19,8 @@ public class OutgoingCallReceiver extends BroadcastReceiver {
 		if (!prefs.isEnableAddPrefix()) {
 			return;
 		}
-		if (!intent.getAction().equals(Intent.ACTION_NEW_OUTGOING_CALL)) {
+		String action = intent.getAction();
+		if (!Intent.ACTION_NEW_OUTGOING_CALL.equals(action)) {
 			return;
 		}
 		if (!intent.hasExtra(Intent.EXTRA_PHONE_NUMBER)) {

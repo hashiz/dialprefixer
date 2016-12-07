@@ -19,19 +19,16 @@ public class PhoneStateReceiver extends BroadcastReceiver {
 	@Override
 	public void onReceive(final Context context, Intent intent) {
 		Log.d(TAG, "onReceive: Action:" + intent.getAction());
-		if (!intent.getAction().equals(TelephonyManager.ACTION_PHONE_STATE_CHANGED)) {
+		if (!TelephonyManager.ACTION_PHONE_STATE_CHANGED.equals(intent.getAction())) {
 			return;
 		}
 		if (!intent.hasExtra(TelephonyManager.EXTRA_STATE)) {
 			return;
 		}
 		String state = intent.getStringExtra(TelephonyManager.EXTRA_STATE);
-		if (state == null) {
-			return;
-		}
 		Log.d(TAG, "onReceive: State: " + state);
-		if (state.equals(TelephonyManager.EXTRA_STATE_IDLE)) {
-			Prefs prefs = Prefs.getInstance(context);
+		if (TelephonyManager.EXTRA_STATE_IDLE.equals(state)) {
+			final Prefs prefs = Prefs.getInstance(context);
 			if (!prefs.isCallLogDeletePrefix()) {
 				return;
 			}
@@ -41,7 +38,10 @@ public class PhoneStateReceiver extends BroadcastReceiver {
 				public void onChange(boolean selfChange) {
 					super.onChange(selfChange);
 					resolver.unregisterContentObserver(this);
-					CallLogManager.rewriteLastCallLog(context);
+					if (!prefs.isCallLogDeletePrefix()) {
+						return;
+					}
+					CallLogManager.rewriteCallLog(context);
 				}
 			});
 			return;

@@ -1,12 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="jp.meridiani.apps.dialprefixer"
-    android:versionCode="1002"
-    android:versionName="1.2" >
+    package="jp.meridiani.apps.dialprefixer">
 
-    <uses-sdk
-        android:minSdkVersion="14"
-        android:targetSdkVersion="18" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
     <uses-permission android:name="android.permission.WRITE_CALL_LOG"/>
     <uses-permission android:name="android.permission.READ_CALL_LOG"/>
