@@ -16,13 +16,16 @@ public class OutgoingCallReceiver extends BroadcastReceiver {
 	public void onReceive(Context context, Intent intent) {
 		Prefs prefs = Prefs.getInstance(context);
 		Log.d(TAG, "onReceive");
-		if (!prefs.isEnableAddPrefix()) {
-			return;
-		}
 		String action = intent.getAction();
 		if (!Intent.ACTION_NEW_OUTGOING_CALL.equals(action)) {
 			return;
 		}
+        if (prefs.isCallLogDeletePrefix()) {
+            context.startService(new Intent(context, ObserverService.class));
+        }
+        if (!prefs.isEnableAddPrefix()) {
+            return;
+        }
 		if (!intent.hasExtra(Intent.EXTRA_PHONE_NUMBER)) {
 			return;
 		}

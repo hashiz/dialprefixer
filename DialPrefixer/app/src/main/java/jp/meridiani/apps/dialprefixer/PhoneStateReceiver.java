@@ -32,18 +32,6 @@ public class PhoneStateReceiver extends BroadcastReceiver {
 			if (!prefs.isCallLogDeletePrefix()) {
 				return;
 			}
-			final ContentResolver resolver = context.getContentResolver();
-			resolver.registerContentObserver(CallLog.Calls.CONTENT_URI, true, new ContentObserver(new Handler()) {
-				@Override
-				public void onChange(boolean selfChange) {
-					super.onChange(selfChange);
-					resolver.unregisterContentObserver(this);
-					if (!prefs.isCallLogDeletePrefix()) {
-						return;
-					}
-					CallLogManager.rewriteCallLog(context);
-				}
-			});
 			return;
 		}
 	}
