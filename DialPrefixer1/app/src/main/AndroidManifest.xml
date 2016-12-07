@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="jp.meridiani.apps.dialprefixer"
+    android:versionCode="1002"
+    android:versionName="1.2" >
+
+    <uses-sdk
+        android:minSdkVersion="14"
+        android:targetSdkVersion="18" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
+    <uses-permission android:name="android.permission.WRITE_CALL_LOG"/>
+    <uses-permission android:name="android.permission.READ_CALL_LOG"/>
+    <uses-permission android:name="android.permission.PROCESS_OUTGOING_CALLS"/>
+
+    <application
+        android:allowBackup="true"
+        android:icon="@drawable/ic_launcher"
+        android:label="@string/app_name"
+        android:theme="@style/AppTheme" >
+        <activity
+            android:name=".DialPrefixerActivity"
+            android:label="@string/app_name" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".RuleEditActivity"
+            android:label="@string/activity_rule_edit_title" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".DialPrefixerActivity" />
+        </activity>
+        <activity
+            android:name=".PreferencesActivity"
+            android:label="@string/activity_preference_title" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".DialPrefixerActivity" />
+        </activity>
+        <activity
+            android:name=".AboutActivity"
+            android:label="@string/activity_about_title" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".DialPrefixerActivity" />
+        </activity>
+        <receiver android:name=".PhoneStateReceiver" android:enabled="true">
+            <intent-filter>
+                <action android:name="android.intent.action.PHONE_STATE" />
+            </intent-filter>
+        </receiver>
+        <receiver android:name=".OutgoingCallReceiver" android:enabled="true">
+            <intent-filter>
+                <action android:name="android.intent.action.NEW_OUTGOING_CALL" />
+            </intent-filter>
+        </receiver>
+    </application>
+
+</manifest>
