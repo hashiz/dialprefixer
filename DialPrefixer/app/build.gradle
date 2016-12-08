@@ -7,8 +7,8 @@ android {
         applicationId "jp.meridiani.apps.dialprefixer"
         minSdkVersion 14
         targetSdkVersion 22
-        versionCode 1004
-        versionName '1.4'
+        versionCode 1006
+        versionName '1.6'
     }
     buildTypes {
         release {

@@ -87,6 +87,14 @@
 		    android:layout_height="wrap_content"
 		    />
 
+		<CheckBoxPreference
+			android:id="@+id/prefs_calllog_showtoast_checkbox"
+			android:key="calllog_showtoast"
+			android:title="@string/prefs_calllog_showtoast_when_rewrite"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			/>
+
 	</PreferenceCategory>
 
     <PreferenceCategory

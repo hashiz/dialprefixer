@@ -29,7 +29,7 @@ public class ObserverService extends Service {
                     stopSelf();
                     return;
                 }
-                CallLogManager.rewriteCallLog(context);
+                CallLogManager.rewriteLastCallLog(context, prefs.isCallLogShowToast());
             }
         };
     }

@@ -26,6 +26,7 @@ public class Prefs implements OnSharedPreferenceChangeListener {
 	static final String KEY_SEND_CALLERID        = "send_callerid";
 	static final String KEY_NOSEND_CALLERID      = "nosend_callerid";
 	static final String KEY_CALLLOG_DELETEPREFIX = "calllog_deleteprefix";
+	static final String KEY_CALLLOG_SHOWTOAST     = "calllog_showtoast";
 	static final String KEY_CONFIRMNUMBER        = "confirmnumber";
     static final String KEY_DISPLAYNUMBER        = "displaynumber";
 
@@ -116,6 +117,10 @@ public class Prefs implements OnSharedPreferenceChangeListener {
 
 	public boolean isCallLogDeletePrefix() {
 		return mSharedPrefs.getBoolean(KEY_CALLLOG_DELETEPREFIX, false);
+	}
+
+	public boolean isCallLogShowToast() {
+		return mSharedPrefs.getBoolean(KEY_CALLLOG_SHOWTOAST, false);
 	}
 
 	public boolean isConfirmNumber() {

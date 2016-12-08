@@ -2,7 +2,7 @@
 <resources>
 
     <!-- main -->
-    <string name="app_name">Dial Prefixer</string>
+    <string name="app_name" translatable="false">Dial Prefixer</string>
     <string name="action_add_rule">Add Rule</string>
     <string name="action_reload_defaults">Reload Default Rules</string>
     <string name="action_rewrite_calllog">Rewrite CallLog</string>
@@ -12,8 +12,8 @@
     <!-- about -->
     <string name="activity_about_title">About</string>
     <string name="about_version_title">Version:</string>
-    <string name="about_changelog_title">Changes:</string>
-    <string name="about_copyright">Copyright(R) 2013 reczcgo All rights reserved.</string>
+    <string name="about_changelog_title" translatable="false">Changes:</string>
+    <string name="about_copyright" translatable="false">Copyright(C) 2013-2016 reczcgo All rights reserved.</string>
 
     <!-- rule edit -->
 	<string name="activity_rule_edit_title">Rule Edit</string>
@@ -45,17 +45,17 @@
 	<string name="prefs_prefixA_hint">Number of dial prefix A</string>
 	<string name="prefs_prefixB_hint">Number of dial prefix B</string>
 	<string name="prefs_prefixC_hint">Number of dial prefix C</string>
-	<string name="default_prefixA">0063</string>
-	<string name="default_prefixB">003768</string>
-	<string name="default_prefixC"></string>
+	<string name="default_prefixA" translatable="false">0063</string>
+	<string name="default_prefixB" translatable="false">003768</string>
+	<string name="default_prefixC" translatable="false">0037691</string>
 	<string name="prefs_nosend_callerid">No Send Caller ID(%d)</string>
 	<string name="prefs_nosend_callerid_dialog">Prefix for no send Caller ID notification</string>
 	<string name="prefs_nosend_callerid_hint">Prefix for no send Caller ID notification</string>
-	<string name="default_nosend_callerid">184</string>
+	<string name="default_nosend_callerid" translatable="false">184</string>
 	<string name="prefs_send_callerid">Send Caller ID(%r)</string>
 	<string name="prefs_send_callerid_dialog">Prefix for send Caller ID notification</string>
 	<string name="prefs_send_callerid_hint">Prefix for send Caller ID notification</string>
-	<string name="default_send_callerid">186</string>
+	<string name="default_send_callerid" translatable="false">186</string>
 	<string name="pref_category_calllog">Call Log</string>
 	<string name="prefs_calllog_deleteprefix">Delete Prefix</string>
 	<string name="pref_category_ui">User Interface</string>
@@ -72,5 +72,6 @@
 	<string name="action_toggle_enable_rule">Toggle Enable/Disable</string>
 	<string name="action_clone_rule">Clone Rule</string>
 	<string name="action_delete_rule">Delete Rule</string>
+	<string name="prefs_calllog_showtoast_when_rewrite">Show toast when rewrite</string>
 
 </resources>

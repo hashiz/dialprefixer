@@ -11,6 +11,7 @@ import android.database.Cursor;
 import android.Manifest;
 import android.provider.CallLog;
 import android.util.Log;
+import android.widget.Toast;
 
 public class CallLogManager {
 	private final static String TAG = "CallLogManager";
@@ -37,14 +38,14 @@ public class CallLogManager {
 	};
 
 	public static void rewriteCallLog(Context context) {
-		rewriteCallLog(context, Range.ALL);
+		rewriteCallLog(context, Range.ALL, false);
 	}
 	
-	public static void rewriteLastCallLog(Context context) {
-		rewriteCallLog(context, Range.LAST);
+	public static void rewriteLastCallLog(Context context, boolean showToast) {
+		rewriteCallLog(context, Range.LAST, showToast);
 	}
 	
-	private static void rewriteCallLog(Context context, Range range) {
+	private static void rewriteCallLog(Context context, Range range, boolean showToast) {
 		ContentResolver resolver = context.getContentResolver();
 		Prefs prefs = Prefs.getInstance(context);
 		Cursor log = null;
@@ -88,6 +89,14 @@ public class CallLogManager {
 												values,
 												_IDIS,
 												new String[] {id});
+					if (showToast) {
+						Toast.makeText(context, "rewrite " + number + " to " + rewrite, Toast.LENGTH_SHORT).show();
+					}
+				}
+				else {
+					if (showToast) {
+						Toast.makeText(context, "no rewrite " + number, Toast.LENGTH_SHORT).show();
+					}
 				}
 				if (range == Range.LAST) {
 					return;
