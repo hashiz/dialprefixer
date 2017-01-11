@@ -20,9 +20,10 @@ public class OutgoingCallReceiver extends BroadcastReceiver {
 		if (!Intent.ACTION_NEW_OUTGOING_CALL.equals(action)) {
 			return;
 		}
-        if (prefs.isCallLogDeletePrefix()) {
-            context.startService(new Intent(context, ObserverService.class));
-        }
+
+		// start CallLog Rewrite Service
+        context.startService(new Intent(context, ObserverService.class));
+
         if (!prefs.isEnableAddPrefix()) {
             return;
         }

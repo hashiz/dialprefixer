@@ -37,21 +37,22 @@ public class CallLogManager {
 		ALL,
 	};
 
-	public static void rewriteCallLog(Context context) {
-		rewriteCallLog(context, Range.ALL, false);
+	public static boolean rewriteCallLog(Context context) {
+		return rewriteCallLog(context, Range.ALL, false);
 	}
 	
-	public static void rewriteLastCallLog(Context context, boolean showToast) {
-		rewriteCallLog(context, Range.LAST, showToast);
+	public static boolean rewriteLastCallLog(Context context, boolean showToast) {
+		return rewriteCallLog(context, Range.LAST, showToast);
 	}
 	
-	private static void rewriteCallLog(Context context, Range range, boolean showToast) {
+	private static boolean rewriteCallLog(Context context, Range range, boolean showToast) {
 		ContentResolver resolver = context.getContentResolver();
 		Prefs prefs = Prefs.getInstance(context);
 		Cursor log = null;
 		String id = null;
 		String number = null;
 		int rows = 0;
+		boolean rewritten = false;
 
 		// permit/deny caller id
 		StringBuffer regex = new StringBuffer(String.format("^(%1$s|%2$s|)", prefs.getPrefixNoSendCallerId(), prefs.getPrefixSendCallerId()));
@@ -80,18 +81,19 @@ public class CallLogManager {
 				id = log.getString(_ID);
 				number = log.getString(NUMBER);
 				Log.d(TAG, "query: id=" + id + ", number=" + number);
-				String rewrite = number.replaceFirst(regex.toString(), "$1");
-				if (!rewrite.equals(number)) {
-					Log.d(TAG, "rewrite:" + number +" to " + rewrite);
+				String newNumber = number.replaceFirst(regex.toString(), "$1");
+				if (!newNumber.equals(number)) {
+					Log.d(TAG, "rewrite:" + number +" to " + newNumber);
 					ContentValues values = new ContentValues();
-					values.put(CallLog.Calls.NUMBER, rewrite);
+					values.put(CallLog.Calls.NUMBER, newNumber);
 					rows = rows + resolver.update(CallLog.Calls.CONTENT_URI,
 												values,
 												_IDIS,
 												new String[] {id});
 					if (showToast) {
-						Toast.makeText(context, "rewrite " + number + " to " + rewrite, Toast.LENGTH_SHORT).show();
+						Toast.makeText(context, "rewrite " + number + " to " + newNumber, Toast.LENGTH_SHORT).show();
 					}
+					rewritten = true;
 				}
 				else {
 					if (showToast) {
@@ -99,7 +101,7 @@ public class CallLogManager {
 					}
 				}
 				if (range == Range.LAST) {
-					return;
+					break;
 				}
 			}
 		}
@@ -109,5 +111,6 @@ public class CallLogManager {
 			}
 		}
 		Log.d(TAG, "rewrite:" + rows);
+		return rewritten;
 	}
 }

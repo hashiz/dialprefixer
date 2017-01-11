@@ -28,11 +28,10 @@ public class PhoneStateReceiver extends BroadcastReceiver {
 		String state = intent.getStringExtra(TelephonyManager.EXTRA_STATE);
 		Log.d(TAG, "onReceive: State: " + state);
 		if (TelephonyManager.EXTRA_STATE_IDLE.equals(state)) {
-			final Prefs prefs = Prefs.getInstance(context);
-			if (!prefs.isCallLogDeletePrefix()) {
-				return;
-			}
-			return;
+//			final Prefs prefs = Prefs.getInstance(context);
+//			if (prefs.isCallLogDeletePrefix()) {
+//				context.startService(new Intent(context, ObserverService.class));
+//			}
 		}
 	}
 
